@@ -107,6 +107,13 @@
 			var html = '';
 			if (!i) i = 1;
 			var markupStory = hw.news.markupStory;
+			// Filter out stories with no comments unless the user opted out.
+			// Default is on; localStorage value 'off' disables the filter.
+			if (localStorage['hackerweb:options:hide-no-comments'] != 'off'){
+				data = data.filter(function(item){
+					return item.comments_count > 0;
+				});
+			}
 			data.forEach(function(item){
 				item.i = i++;
 				html += markupStory(item);
@@ -239,7 +246,13 @@
 				if (!targetParent) return;
 				if (targetParent.parentNode) targetParent.parentNode.removeChild(targetParent);
 				if (!news2) return;
-				var data = news2.slice();
+				// Dedupe against stories already shown from the first page.
+				var seen = {};
+				var news1 = amplify.store('hacker-news') || [];
+				for (var i=0, l=news1.length; i<l; i++) seen[news1[i].id] = true;
+				var data = news2.slice().filter(function(item){
+					return !seen[item.id];
+				});
 				var html = hw.news.markupStories(data, 31);
 				$('hwlist').insertAdjacentHTML('beforeend', html);
 			}, 400);
@@ -329,23 +342,23 @@
 					}
 				}
 
-				// 20K chars will be the max to trigger collapsible comments.
-				// I can use number of comments as the condition but some comments
-				// might have too many chars and make the page longer.
-				if (html.length > 20000){
-					var subUls = div.querySelectorAll('.comments>ul>li>ul');
-					var tmpl3 = tmpl('comments-toggle');
-					for (var j=0, l=subUls.length; j<l; j++){
-						var subUl = subUls[j],
-							commentsCount = subUl.querySelectorAll('.metadata').length;
-						subUl.style.display = 'none';
-						if (commentsCount){
-							subUl.insertAdjacentHTML('beforebegin', tmpl3.render({
-								comments_count: commentsCount,
-								i_reply: commentsCount == 1 ? 'reply' : 'replies'
-							}));
-						}
-					}
+				// Add a collapse/expand toggle to every nested reply list.
+				// Subtrees with fewer than 3 descendants are marked compact and
+				// stay hidden via CSS unless the user explicitly collapses them
+				// (e.g. via the parent-collapse chevron), to keep small threads
+				// from being noisy.
+				var subUls = div.querySelectorAll('.comments li > ul');
+				for (var j=0, l=subUls.length; j<l; j++){
+					var subUl = subUls[j],
+						commentsCount = subUl.querySelectorAll('.metadata').length;
+					// Subtrees with fewer than 3 descendants are short enough
+					// to just render inline — no toggle, no initial collapse.
+					if (commentsCount < 3) continue;
+					subUl.style.display = 'none';
+					subUl.insertAdjacentHTML('beforebegin',
+						'<button class="comments-toggle collapsed">' +
+						commentsCount + ' replies</button>'
+					);
 				}
 
 				while ($commentsSection.hasChildNodes()){
@@ -433,8 +446,44 @@
 				// Fix weird bug introduced in iOS6
 				// Toggling this button somehow make the content scroll to top.
 				var top = $commentsSection.scrollTop;
-				ulStyle.display = (ulStyle.display == 'none') ? '' : 'none';
+				var collapsed = ulStyle.display != 'none';
+				ulStyle.display = collapsed ? 'none' : '';
+				if (collapsed){
+					target.classList.add('collapsed');
+				} else {
+					target.classList.remove('collapsed');
+				}
 				$commentsSection.scrollTop = top;
+			}
+		},
+		collapseParent: function(target){
+			// Climb out of this comment's <li>, then out of its parent <ul>
+			// (the children-list of the grandparent comment), and collapse
+			// that whole list. Then scroll the grandparent's metadata into
+			// view so the user lands on the comment they just folded out of.
+			var li = target.closest('li');
+			if (!li) return;
+			var parentUl = li.parentNode;
+			if (!parentUl || parentUl.tagName != 'UL') return;
+			var grandparentLi = parentUl.parentNode;
+			if (!grandparentLi || grandparentLi.tagName != 'LI') return;
+			parentUl.style.display = 'none';
+			// The grandparent's comments-toggle (if present) is the
+			// element immediately preceding the now-hidden <ul>. Mark it
+			// collapsed and scroll it into view so the user lands on the
+			// re-expand affordance, with the next sibling thread visible
+			// below it.
+			var toggleBtn = parentUl.previousElementSibling;
+			if (toggleBtn && toggleBtn.classList && toggleBtn.classList.contains('comments-toggle')){
+				toggleBtn.classList.add('collapsed');
+				if (toggleBtn.scrollIntoView){
+					toggleBtn.scrollIntoView({block: 'start'});
+				}
+			} else {
+				var meta = grandparentLi.querySelector('p.metadata');
+				if (meta && meta.scrollIntoView){
+					meta.scrollIntoView({block: 'start'});
+				}
 			}
 		},
 		reload: function(){
@@ -500,6 +549,32 @@
 			}
 		}
 		renderColorScheme();
+
+		// "Hide stories with no comments" toggle on the About page.
+		var $hideNoComments = $('hw-hide-no-comments');
+		if ($hideNoComments){
+			var hideKey = 'hackerweb:options:hide-no-comments';
+			var current = localStorage[hideKey] == 'off' ? 'off' : 'on';
+			var input = $hideNoComments.querySelector('[name=hw-hide-no-comments][value="' + current + '"]');
+			if (input) input.checked = true;
+			$hideNoComments.onclick = function(){
+				var checked = $hideNoComments.querySelector('[name=hw-hide-no-comments]:checked');
+				if (!checked) return;
+				if (checked.value == 'off'){
+					localStorage[hideKey] = 'off';
+				} else {
+					delete localStorage[hideKey];
+				}
+				// Preserve the "More" expanded state across the re-render.
+				var wasExpanded = !!(d.getElementById('hwlist') && !d.querySelector('#hwlist .more-link'));
+				hw.news.render();
+				if (wasExpanded){
+					var list = d.getElementById('hwlist');
+					var moreLi = list && list.querySelector('.more-link');
+					if (moreLi && moreLi.parentNode) hw.news.more(moreLi);
+				}
+			};
+		}
 	};
 
 	w.hw = hw;

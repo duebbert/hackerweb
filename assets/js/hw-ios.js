@@ -357,6 +357,10 @@
 		hw.comments.toggle(target);
 	});
 
+	tappable('button.collapse-parent', function(e, target){
+		hw.comments.collapseParent(target);
+	});
+
 	tappable('#view-comments .load-error button', hw.comments.reload);
 
 	hw.sub('selectCurrentStory', function(id){

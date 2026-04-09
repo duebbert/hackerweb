@@ -252,16 +252,25 @@ pre, code{
 	z-index: 2;
 	width: 44px;
 	height: 100%;
-	text-align: center;
-	vertical-align: middle;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 }
 .tableview-links li>a.detail-disclosure-button span{
-	display: inline-block;
+	display: block;
 	width: 17px;
 	height: 17px;
 	background: transparent url(../images/web/comments-icon.svg) no-repeat;
 	background-size: 17px 17px;
-	margin: 15px 0;
+}
+.tableview-links li>a.detail-disclosure-button .comments-count{
+	display: block;
+	font-size: 13px;
+	font-weight: normal;
+	line-height: 1;
+	margin-top: 6px;
+	color: #888;
 }
 .tableview-links li>a.detail-disclosure-button:active span{
 	opacity: .5;
@@ -458,9 +467,38 @@ ol.grouped-tableview-links li>a:hover{
 .view section.comments ul ul li{
 	padding: 0 0 0 15px;
 	border: 0;
-	background: transparent url(../images/web/comment-arrow.svg) no-repeat 0 4px;
-	background-size: 10px 9px;
 	color: #333;
+}
+.view section.comments p.metadata .collapse-parent{
+	float: left;
+	width: 12px;
+	height: 14px;
+	margin: 2px 6px 0 -15px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+	position: relative;
+}
+.view section.comments p.metadata .collapse-parent::before,
+.view section.comments p.metadata .collapse-parent::after{
+	content: '';
+	position: absolute;
+	left: 1px;
+	width: 7px;
+	height: 7px;
+	border-top: 2px solid #888;
+	border-left: 2px solid #888;
+	transform: rotate(45deg);
+}
+.view section.comments p.metadata .collapse-parent::before{ top: 5px; }
+.view section.comments p.metadata .collapse-parent::after{ top: 9px; }
+.view section.comments p.metadata .collapse-parent:hover::before,
+.view section.comments p.metadata .collapse-parent:hover::after{
+	border-color: #bf223f;
+}
+.view section.comments > ul > li > p.metadata > .collapse-parent{
+	display: none;
 }
 .view section.comments p{
 	margin: 8px 0;
