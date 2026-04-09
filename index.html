@@ -10,11 +10,10 @@
 		<meta name="color-scheme" id="meta-color-scheme" content="dark light" />
 		<meta name="theme-color" content="#fff" media="(prefers-color-scheme: light)" />
 		<meta name="theme-color" content="#1c1c1e" media="(prefers-color-scheme: dark)" />
-		<link rel="shortcut icon" href="icons/favicon.ico" />
-		<link rel="shortcut icon" sizes="196x196" href="icons/icon-196.png" />
-		<link rel="apple-touch-icon-precomposed" href="icons/icon-180.png" />
-		<link rel="manifest" href="manifest.json" />
-		<link rel="stylesheet" href="assets/css/hw.css" />
+		<link rel="shortcut icon" href="/icons/favicon.ico" />
+		<link rel="shortcut icon" sizes="196x196" href="/icons/icon-196.png" />
+		<link rel="apple-touch-icon-precomposed" href="/icons/icon-180.png" />
+		<link rel="manifest" href="/manifest.json" />
 	</head>
 	<body>
 		<div class="view hidden" id="view-home">
@@ -104,19 +103,11 @@
 				</section>
 			</div>
 		</div>
-		<script type="module">
-			// In dev mode (Vite server), load source files directly;
-			// in production, load built bundles from js/
-			var isDev = location.port && location.port !== '80' && location.port !== '443';
-			var s = document.createElement('script');
-			s.type = 'module';
-			s.src = isDev ? 'assets/js/hw-unified.js' : 'js/hw-unified.min.js';
-			document.head.appendChild(s);
-		</script>
+		<script type="module" src="/src/js/main.js"></script>
 		<script>
 			if ('serviceWorker' in navigator) {
 				navigator.serviceWorker
-					.register('service-worker.js')
+					.register('/service-worker.js')
 					.then(function (registration) {
 						console.log('ServiceWorker registration successful with scope: ', registration.scope);
 					})

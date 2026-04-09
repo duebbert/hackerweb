@@ -458,16 +458,25 @@ hw.init = function () {
 
 	var colorSchemeRetries = 0;
 	function renderColorScheme() {
-		var link = Array.from(document.styleSheets).find(function (s) {
-			return /hw.*\.css/i.test(s.href);
-		});
-		if (!link) {
+		var cssRule = null;
+		var sheets = document.styleSheets;
+		for (var i = 0; i < sheets.length && !cssRule; i++) {
+			try {
+				var rules = sheets[i].cssRules;
+				for (var j = 0; j < rules.length; j++) {
+					if (rules[j].media && /color-scheme:\s*dark/i.test(rules[j].media.mediaText)) {
+						cssRule = rules[j];
+						break;
+					}
+				}
+			} catch (e) {
+				// Skip cross-origin stylesheets
+			}
+		}
+		if (!cssRule) {
 			if (++colorSchemeRetries < 10) setTimeout(renderColorScheme, 1000);
 			return;
 		}
-		var cssRule = Array.from(link.cssRules).find(function (r) {
-			return r.media && /color-scheme:\s*dark/i.test(r.media.mediaText);
-		});
 		if (cssRule) {
 			$('hw-appearance-container').hidden = false;
 			var $hwAppearance = $('hw-appearance');
