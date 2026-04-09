@@ -1,6 +1,6 @@
-import amplify from './libs/amplify.store.js';
+import store from './libs/store.js';
 import hnapi from './libs/hnapi.js';
-import ruto from './libs/ruto.js';
+import router from './libs/router.js';
 import TEMPLATES from './templates.js';
 
 var d = document;
@@ -42,7 +42,7 @@ var hw = {
 		var t = TEMPLATES[template];
 		if (!t) return;
 		if (!data) return t;
-		return t.render(data);
+		return t(data);
 	},
 	setTitle: function (str) {
 		var title = 'HackerWeb';
@@ -52,15 +52,15 @@ var hw = {
 				title = str + ' \u2013 ' + title;
 			}
 		}
-		document.title = title;
+		d.title = title;
 	},
 };
 
 var tmpl = hw.tmpl;
 
-// Fix browsers freak out of amplify.store.sessionStorage not a function
-if (!amplify.store.sessionStorage || typeof amplify.store.sessionStorage != 'function') {
-	amplify.store.sessionStorage = amplify.store.memory; // Fallback to in-memory storage
+// Fix browsers freak out of store.sessionStorage not a function
+if (!store.sessionStorage || typeof store.sessionStorage != 'function') {
+	store.sessionStorage = store.memory; // Fallback to in-memory storage
 }
 
 var linkElement = d.createElement('a');
@@ -79,6 +79,21 @@ var domainify = function (url) {
 	domained = domain + firstPath;
 	domainsCache[url] = domained;
 	return domained;
+};
+
+// Search both news caches for a post by ID.
+// Returns { post, cacheKey } or null.
+var findCachedPost = function (id) {
+	var caches = ['hacker-news', 'hacker-news2'];
+	for (var c = 0; c < caches.length; c++) {
+		var news = store(caches[c]);
+		if (news) {
+			for (var i = 0, l = news.length; i < l; i++) {
+				if (id == news[i].id) return { post: news[i], cacheKey: caches[c], news: news };
+			}
+		}
+	}
+	return null;
 };
 
 var $homeScroll = d.querySelector('#view-home .scroll'),
@@ -134,32 +149,9 @@ hw.news = {
 		if (!story || !story.id) return;
 		var id = story.id;
 		var data = story.data;
-		var post;
-		var newsCache = 'hacker-news';
-		var news = amplify.store(newsCache);
-		if (news) {
-			for (var i = 0, l = news.length; i < l; i++) {
-				var p = news[i];
-				if (id == p.id) {
-					post = p;
-					break;
-				}
-			}
-		}
-		if (!post) {
-			newsCache = 'hacker-news2';
-			news = amplify.store(newsCache);
-			if (news) {
-				for (var i = 0, l = news.length; i < l; i++) {
-					var p = news[i];
-					if (id == p.id) {
-						post = p;
-						break;
-					}
-				}
-			}
-		}
-		if (!post) return;
+		var cached = findCachedPost(id);
+		if (!cached) return;
+		var post = cached.post;
 		// Pass in the possibly changed values
 		var changed = false;
 		['title', 'url', 'time_ago', 'comments_count', 'points'].forEach(function (key) {
@@ -170,8 +162,8 @@ hw.news = {
 			}
 		});
 		if (!changed) return;
-		// Update the news cache
-		amplify.store(newsCache, news);
+		// Update the news cache (post was mutated in-place within cached.news)
+		store(cached.cacheKey, cached.news);
 		// Update the story in the news list
 		var storyEl = $('story-' + id);
 		if (!storyEl) return;
@@ -183,14 +175,14 @@ hw.news = {
 	render: function (opts) {
 		if (loadingNews) return;
 		if (!opts) opts = {};
-		var cached = amplify.store('hacker-news-cached');
+		var cached = store('hacker-news-cached');
 		var tmpl1 = tmpl('stories-load');
 		var loadNews = function (_data) {
 			var data = _data.slice();
 			var html =
 				'<ul class="tableview tableview-links" id="hwlist">' +
 				hw.news.markupStories(data) +
-				(amplify.store('hacker-news2')
+				(store('hacker-news2')
 					? '<li><a class="more-link">More&hellip;<span class="loader"><i class="icon-loading"></i></span></a></li>'
 					: '') +
 				'</ul>';
@@ -198,11 +190,11 @@ hw.news = {
 			hw.pub('onRenderNews');
 		};
 		if (cached) {
-			var news = amplify.store('hacker-news');
+			var news = store('hacker-news');
 			var delay = opts.delay;
 			if (delay) {
 				loadingNews = true;
-				$homeScrollSection.innerHTML = tmpl1.render({ loading: true });
+				$homeScrollSection.innerHTML = tmpl1({ loading: true });
 				setTimeout(function () {
 					loadingNews = false;
 					loadNews(news);
@@ -212,10 +204,9 @@ hw.news = {
 			}
 		} else {
 			loadingNews = true;
-			$homeScrollSection.innerHTML = tmpl1.render({ loading: true });
+			$homeScrollSection.innerHTML = tmpl1({ loading: true });
 			var showError = function () {
-				$homeScrollSection.innerHTML = tmpl1.render({ load_error: true });
-				hw.pub('logAPIError', 'news');
+				$homeScrollSection.innerHTML = tmpl1({ load_error: true });
 			};
 			hnapi.news(
 				function (data) {
@@ -224,16 +215,16 @@ hw.news = {
 						showError();
 						return;
 					}
-					amplify.store('hacker-news', data);
-					amplify.store('hacker-news-cached', true, {
+					store('hacker-news', data);
+					store('hacker-news-cached', true, {
 						expires: 1000 * 60 * 10, // 10 minutes
 					});
-					amplify.store('hacker-news2', null);
+					store('hacker-news2', null);
 					loadNews(data);
 					// Preload news2 to prevent discrepancies between /news and /news2 results
 					hnapi.news2(function (data) {
 						if (!data || data.error) return;
-						amplify.store('hacker-news2', data);
+						store('hacker-news2', data);
 						$('hwlist').insertAdjacentHTML(
 							'beforeend',
 							'<li><a class="more-link">More&hellip;<span class="loader"></span></a></li>',
@@ -255,7 +246,7 @@ hw.news = {
 	more: function (target) {
 		if (target.classList.contains('loading')) return;
 		target.classList.add('loading');
-		var news2 = amplify.store('hacker-news2');
+		var news2 = store('hacker-news2');
 		setTimeout(function () {
 			target.classList.remove('loading');
 			var targetParent = target.parentNode;
@@ -264,7 +255,7 @@ hw.news = {
 			if (!news2) return;
 			// Dedupe against stories already shown from the first page.
 			var seen = {};
-			var news1 = amplify.store('hacker-news') || [];
+			var news1 = store('hacker-news') || [];
 			for (var i = 0, l = news1.length; i < l; i++) seen[news1[i].id] = true;
 			var data = news2.slice().filter(function (item) {
 				return !seen[item.id];
@@ -283,7 +274,7 @@ hw.comments = {
 	currentID: null,
 	render: function (id) {
 		if (!id) return;
-		var post = amplify.store.sessionStorage('hacker-item-' + id);
+		var post = store.sessionStorage('hacker-item-' + id);
 		if (hw.comments.currentID == id && post) return;
 		hw.comments.currentID = id;
 
@@ -295,13 +286,11 @@ hw.comments = {
 			if (!data.has_post) {
 				hw.setTitle();
 				$commentsHeading.innerText = '';
-				$commentsSection.innerHTML = tmpl1.render(data);
-				hw.pub('adjustCommentsSection');
+				$commentsSection.innerHTML = tmpl1(data);
 				hw.pub('onRenderComments');
 				return;
 			}
 
-			var tmpl2 = tmpl('comments');
 			// If "local" link, link to Hacker News web site
 			if (/^item/i.test(data.url)) {
 				data.url = '//news.ycombinator.com/' + data.url;
@@ -333,7 +322,7 @@ hw.comments = {
 			hw.setTitle(data.title);
 			$commentsHeading.innerText = data.title;
 
-			var html = tmpl1.render(data, { comments_list: tmpl2 });
+			var html = tmpl1(data);
 			var div = d.createElement('div');
 			div.innerHTML = html;
 
@@ -371,13 +360,7 @@ hw.comments = {
 				);
 			}
 
-			while ($commentsSection.hasChildNodes()) {
-				$commentsSection.removeChild($commentsSection.childNodes[0]);
-			}
-			while (div.hasChildNodes()) {
-				$commentsSection.appendChild(div.childNodes[0]);
-			}
-			div = null;
+			$commentsSection.replaceChildren(...div.childNodes);
 
 			hw.pub('onRenderComments');
 		};
@@ -386,28 +369,8 @@ hw.comments = {
 			$commentsSection.scrollTop = 0;
 			loadPost(post, id);
 		} else {
-			var news = amplify.store('hacker-news');
-			if (news) {
-				for (var i = 0, l = news.length; i < l; i++) {
-					var p = news[i];
-					if (id == p.id) {
-						post = p;
-						break;
-					}
-				}
-			}
-			if (!post) {
-				var news = amplify.store('hacker-news2');
-				if (news) {
-					for (var i = 0, l = news.length; i < l; i++) {
-						var p = news[i];
-						if (id == p.id) {
-							post = p;
-							break;
-						}
-					}
-				}
-			}
+			var cached = findCachedPost(id);
+			if (cached) post = cached.post;
 			if (post) {
 				post.loading = true;
 				loadPost(post, id);
@@ -422,7 +385,6 @@ hw.comments = {
 				} else {
 					loadPost({ load_error: true }, id);
 				}
-				hw.pub('logAPIError', 'comments');
 			};
 			hnapi.item(
 				id,
@@ -432,7 +394,7 @@ hw.comments = {
 						showError();
 						return;
 					}
-					amplify.store.sessionStorage('hacker-item-' + id, data, {
+					store.sessionStorage('hacker-item-' + id, data, {
 						expires: 1000 * 60 * 5, // 5 minutes
 					});
 					hw.news.updateStory({
@@ -486,20 +448,21 @@ hw.comments = {
 	},
 	reload: function () {
 		hw.comments.currentID = null;
-		ruto.reload();
+		router.reload();
 	},
 };
 
 hw.init = function () {
 	hw.news.render();
-	ruto.init();
+	router.init();
 
+	var colorSchemeRetries = 0;
 	function renderColorScheme() {
 		var link = Array.from(document.styleSheets).find(function (s) {
 			return /hw.*\.css/i.test(s.href);
 		});
 		if (!link) {
-			setTimeout(renderColorScheme, 1000);
+			if (++colorSchemeRetries < 10) setTimeout(renderColorScheme, 1000);
 			return;
 		}
 		var cssRule = Array.from(link.cssRules).find(function (r) {
@@ -577,17 +540,10 @@ hw.init = function () {
 	}
 };
 
-ruto
+router
 	.config({
-		before: function (path, name) {
-			hw.hideAllViews();
-			var view = $('view-' + name);
-			view.classList.remove('hidden');
-			hw.currentView = name;
-			hw.setTitle(view.querySelector('header h1').textContent);
-		},
 		notfound: function () {
-			ruto.go('/');
+			router.go('/');
 		},
 	})
 	.add('/', 'home')
@@ -596,4 +552,4 @@ ruto
 		hw.comments.render(id);
 	});
 
-export { hw, $, amplify, ruto };
+export { hw, $, store, router };

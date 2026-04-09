@@ -9,16 +9,12 @@
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="color-scheme" id="meta-color-scheme" content="dark light" />
 		<meta name="theme-color" content="#fff" media="(prefers-color-scheme: light)" />
-		<meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
+		<meta name="theme-color" content="#1c1c1e" media="(prefers-color-scheme: dark)" />
 		<link rel="shortcut icon" href="icons/favicon.ico" />
 		<link rel="shortcut icon" sizes="196x196" href="icons/icon-196.png" />
 		<link rel="apple-touch-icon-precomposed" href="icons/icon-180.png" />
 		<link rel="manifest" href="manifest.json" />
-		<style>
-			body {
-				visibility: hidden;
-			}
-		</style>
+		<link rel="stylesheet" href="assets/css/hw.css" />
 	</head>
 	<body>
 		<div class="view hidden" id="view-home">
@@ -108,43 +104,16 @@
 				</section>
 			</div>
 		</div>
+		<script type="module">
+			// In dev mode (Vite server), load source files directly;
+			// in production, load built bundles from js/
+			var isDev = location.port && location.port !== '80' && location.port !== '443';
+			var s = document.createElement('script');
+			s.type = 'module';
+			s.src = isDev ? 'assets/js/hw-unified.js' : 'js/hw-unified.min.js';
+			document.head.appendChild(s);
+		</script>
 		<script>
-			(function (d, ua) {
-				var hasLocalStorage = false;
-				try {
-					var testKey = '__hackerweb__test';
-					localStorage.setItem(testKey, testKey);
-					localStorage.removeItem(testKey);
-					hasLocalStorage = true;
-				} catch (e) {}
-
-				var theme = 'web';
-				if (ua && /iPhone|iPod|iPad/.test(ua)) {
-					var version = parseInt((ua.match(/ OS (\d+)_/i) || [, 0])[1], 10);
-					if (version >= 7) {
-						theme = 'ios-2';
-					} else if (version >= 5) {
-						theme = 'ios';
-					}
-				}
-				if (hasLocalStorage) theme = localStorage['hackerweb:options:theme'] || theme;
-
-				var head = d.head || d.getElementsByTagName('head')[0];
-
-				var link = d.createElement('link');
-				link.rel = 'stylesheet';
-				link.href = 'assets/css/hw-' + theme + '.min.css';
-				head.insertBefore(link, head.lastChild);
-
-				var script = d.createElement('script');
-				script.type = 'module';
-				// In dev mode (Vite server), load source files directly;
-				// in production, load built bundles from js/
-				var isDev = location.port && location.port !== '80' && location.port !== '443';
-				script.src = isDev ? 'assets/js/hw-' + theme + '.js' : 'js/hw-' + theme + '.min.js';
-				head.insertBefore(script, head.lastChild);
-			})(document, navigator.userAgent);
-
 			if ('serviceWorker' in navigator) {
 				navigator.serviceWorker
 					.register('service-worker.js')

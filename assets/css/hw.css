@@ -1,40 +1,72 @@
-@import url(https://fonts.googleapis.com/css2?family=Inconsolata&display=swap);
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata&display=swap');
+
+:root {
+	--bg: #fff;
+	--text: #000;
+	--header-bg: #f8f8f8;
+	--header-bg-shaded: #f6f6f7;
+	--separator: rgba(0, 0, 0, 0.3);
+	--link: #007aff;
+	--link-domain: #003d80;
+	--meta: #8e8e93;
+	--border: #c8c7cc;
+	--active-bg: #d9d9d9;
+	--tableview-bg: #fff;
+	--grouped-bg: #fff;
+	--shaded-bg: #efeff4;
+	--pre-bg: #eee;
+	--comment-user: #bf223f;
+	--comment-nested: #333;
+	--poll-detail: #333;
+	--toggle-color: #848484;
+	--y-icon-border: #eee;
+	--overlay-bg: rgba(0, 2, 8, 0.5);
+}
+
 html {
 	height: 100%;
 	overflow: hidden;
 }
 body {
-	font-family: -apple-system-font, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-family:
+		-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Helvetica, Arial,
+		sans-serif;
 	font-size: 17px;
 	margin: 0;
 	padding: 0;
-	background-color: #fff;
+	color: var(--text);
+	background-color: var(--bg);
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 	-webkit-text-size-adjust: none;
 	visibility: visible;
 	overflow: hidden;
 }
+
 a {
-	color: #007aff;
+	color: var(--link);
 	text-decoration: none;
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
+
 pre {
 	word-wrap: normal;
 	overflow-wrap: normal;
 	line-height: 1.2em;
 }
-code,
-pre {
+pre,
+code {
 	font-family: Inconsolata, Consolas, 'Lucida Console', monospace;
 }
+
 .link-text {
-	color: #007aff;
+	color: var(--link);
 }
+
 .inline-block {
 	display: inline-block;
 }
+
 i.icon-refresh {
 	display: inline-block;
 	width: 14px;
@@ -45,8 +77,9 @@ i.icon-refresh {
 	white-space: nowrap;
 	overflow: hidden;
 	text-indent: 100%;
-	-webkit-transform: translateY(-3px);
+	transform: translateY(-3px);
 }
+
 i.icon-loading {
 	display: inline-block;
 	width: 20px;
@@ -54,49 +87,7 @@ i.icon-loading {
 	background: transparent url(../images/ios/activity-indicator.png) no-repeat;
 	background-size: 20px auto;
 	vertical-align: text-bottom;
-	-webkit-animation: loading-sprite 1s step-start infinite;
 	animation: loading-sprite 1s step-start infinite;
-}
-@-webkit-keyframes loading-sprite {
-	0% {
-		background-position: 0 0;
-	}
-	8.33% {
-		background-position: 0 -20px;
-	}
-	16.67% {
-		background-position: 0 -40px;
-	}
-	25% {
-		background-position: 0 -60px;
-	}
-	33.33% {
-		background-position: 0 -80px;
-	}
-	41.67% {
-		background-position: 0 -100px;
-	}
-	50% {
-		background-position: 0 -120px;
-	}
-	58.33% {
-		background-position: 0 -140px;
-	}
-	66.67% {
-		background-position: 0 -160px;
-	}
-	75% {
-		background-position: 0 -180px;
-	}
-	83.33% {
-		background-position: 0 -200px;
-	}
-	91.67% {
-		background-position: 0 -220px;
-	}
-	100% {
-		background-position: 0 0;
-	}
 }
 @keyframes loading-sprite {
 	0% {
@@ -139,6 +130,7 @@ i.icon-loading {
 		background-position: 0 0;
 	}
 }
+
 .view {
 	position: fixed;
 	top: 0;
@@ -149,17 +141,18 @@ i.icon-loading {
 	z-index: 2;
 }
 .view.hidden {
-	-webkit-transform: translate3d(-100%, -100%, 0);
 	transform: translate3d(-100%, -100%, 0);
 	pointer-events: none;
 }
+
 .view > header {
 	height: 44px;
 	min-height: 44px;
 	max-height: 44px;
 	line-height: 44px;
-	background-color: #f8f8f8;
+	background-color: var(--header-bg);
 	-webkit-user-select: none;
+	user-select: none;
 	-webkit-touch-callout: none;
 }
 .view:after {
@@ -168,28 +161,27 @@ i.icon-loading {
 	top: 44px;
 	width: 100%;
 	height: 1px;
-	background-color: rgba(0, 0, 0, 0.3);
+	background-color: var(--separator);
 	z-index: 3;
 }
 .view.shaded > header {
-	background-color: #f6f6f7;
+	background-color: var(--header-bg-shaded);
 }
+
 .view > header .header-button {
 	cursor: pointer;
 	text-decoration: none;
 	position: absolute;
 	top: 0;
 	padding: 0 8px;
-	color: #007aff;
+	color: var(--link);
 	font-style: normal;
-	-webkit-transition: opacity 0.3s;
 	transition: opacity 0.3s;
-	-webkit-tap-highlight-color: transparent;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
-.view > header .header-button.tappable-active {
+.view > header .header-button:active {
 	opacity: 0.205;
-	-webkit-transition-duration: 0;
-	transition-duration: 0;
+	transition-duration: 0s;
 }
 .view > header .header-button-left {
 	left: 0;
@@ -222,6 +214,7 @@ i.icon-loading {
 .view > header .header-back-button button {
 	padding-left: 19px;
 }
+
 .view > header h1 {
 	font-size: 17px;
 	text-align: center;
@@ -231,6 +224,7 @@ i.icon-loading {
 	margin: 0;
 	padding: 0;
 }
+
 .view > .scroll {
 	height: calc(100% - 44px);
 	overflow: auto;
@@ -242,66 +236,65 @@ i.icon-loading {
 	-webkit-overflow-scrolling: touch;
 }
 .view.shaded > .scroll {
-	background-color: #efeff4;
+	background-color: var(--shaded-bg);
 }
-.view > .scroll .load-error,
-.view > .scroll .loader {
+.view > .scroll .loader,
+.view > .scroll .load-error {
 	padding: 100px 0 50px;
 	-webkit-user-select: none;
+	user-select: none;
 	text-align: center;
-	color: #8e8e93;
+	color: var(--meta);
 	font-size: 17px;
-	font-weight: 400;
+	font-weight: normal;
 	font: -apple-system-body;
 }
+
 .tableview {
 	margin: 0;
 	padding: 0;
 	list-style: none;
-	background-color: #fff;
+	background-color: var(--tableview-bg);
 	-webkit-user-select: none;
+	user-select: none;
 }
 .tableview li {
 	display: block;
-	background-image: -webkit-linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
-	background-image: linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
+	background-image: linear-gradient(to top, var(--border), var(--border) 50%, transparent 50%);
 	background-position: 15px bottom;
 	background-repeat: no-repeat;
 	background-size: 100% 2px;
 }
 .tableview-links li {
-	display: -webkit-flex;
 	display: flex;
 }
 .tableview-links li > a {
-	display: -webkit-flex;
 	display: flex;
 	font-size: 17px;
 	font: -apple-system-body;
 	line-height: 1.2em;
-	color: #000;
+	color: var(--text);
 	padding: 10px 10px 10px 15px;
 	text-decoration: none;
-	-webkit-tap-highlight-color: transparent;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	box-sizing: border-box;
 	width: 100%;
 }
 .tableview-links li > a:visited {
-	color: #8e8e93;
+	color: var(--meta);
 }
 .tableview-links li > a .number {
 	text-align: center;
 	min-width: 2.5ex;
 	padding-right: 10px;
-	color: #8e8e93;
+	color: var(--meta);
 }
 .tableview-links li > a .story {
-	-webkit-flex-grow: 1;
 	flex-grow: 1;
 	min-width: 0;
 }
 .tableview-links li > a .story > b {
-	font-weight: 400;
+	font-weight: normal;
 }
 .tableview-links li > a .metadata {
 	margin-top: 1px;
@@ -309,10 +302,10 @@ i.icon-loading {
 	font: -apple-system-footnote;
 	line-height: 1.2em;
 	display: block;
-	color: #8e8e93;
+	color: var(--meta);
 }
 .tableview-links li > a .metadata .link-text {
-	color: #003d80;
+	color: var(--link-domain);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -324,24 +317,21 @@ i.icon-loading {
 	width: 100%;
 	position: absolute;
 	height: 1px;
-	background-image: -webkit-linear-gradient(bottom, #fff, #fff 50%, transparent 50%);
-	background-image: linear-gradient(bottom, #fff, #fff 50%, transparent 50%);
+	background-image: linear-gradient(to top, var(--bg), var(--bg) 50%, transparent 50%);
 	background-position: bottom;
 	background-size: 1px 2px;
 	left: 0;
-	-webkit-transform: translateY(-11px);
 	transform: translateY(-11px);
 	opacity: 0;
 }
-.tableview-links li > a.selected,
-.tableview-links li > a.tappable-active {
-	background-color: #d9d9d9;
+.tableview-links li > a:active,
+.tableview-links li > a.selected {
+	background-color: var(--active-bg);
 }
-.tableview-links li:not(:first-child) > a.tappable-active:first-child:before {
+.tableview-links li:not(:first-child) > a:active:first-child:before {
 	opacity: 1;
 }
 .tableview-links li > a.detail-disclosure {
-	-webkit-flex-grow: 1;
 	flex-grow: 1;
 	padding-right: 44px;
 }
@@ -354,7 +344,6 @@ i.icon-loading {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	-webkit-transition: opacity 0.3s;
 	transition: opacity 0.3s;
 }
 .tableview-links li > a.detail-disclosure-button span {
@@ -367,19 +356,17 @@ i.icon-loading {
 .tableview-links li > a.detail-disclosure-button .comments-count {
 	display: block;
 	font-size: 13px;
-	font-weight: 400;
+	font-weight: normal;
 	line-height: 1;
 	margin-top: 6px;
 	color: #888;
 }
-.tableview-links li > a.detail-disclosure-button.tappable-active {
+.tableview-links li > a.detail-disclosure-button:active {
 	opacity: 0.205;
-	-webkit-transition-duration: 0;
-	transition-duration: 0;
+	transition-duration: 0s;
 	background-color: transparent;
 }
 .tableview-links li > a.disclosure {
-	-webkit-flex-grow: 1;
 	flex-grow: 1;
 	padding-right: 15px;
 }
@@ -393,12 +380,9 @@ i.icon-loading {
 .tableview-links li > a.more-link {
 	cursor: pointer;
 	-webkit-touch-callout: none;
-	display: block;
-	padding: 20px 20px 20px calc(25px + 2.5ex);
-	-webkit-flex-grow: 1;
-	flex-grow: 1;
-	display: -webkit-flex;
 	display: flex;
+	padding: 20px 20px 20px calc(25px + 2.5ex);
+	flex-grow: 1;
 }
 .tableview-links li > a.more-link:before {
 	content: none !important;
@@ -407,20 +391,17 @@ i.icon-loading {
 	display: none;
 	padding: 0;
 	text-align: right;
-	-webkit-flex-grow: 1;
 	flex-grow: 1;
 }
 .tableview-links li > a.more-link.loading .loader {
 	display: block;
 }
+
 .grouped-tableview {
-	background-color: #fff;
+	background-color: var(--grouped-bg);
 	background-image:
-		-webkit-linear-gradient(top, #c8c7cc, #c8c7cc 50%, transparent 50%),
-		-webkit-linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
-	background-image:
-		linear-gradient(top, #c8c7cc, #c8c7cc 50%, transparent 50%),
-		linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
+		linear-gradient(to bottom, var(--border), var(--border) 50%, transparent 50%),
+		linear-gradient(to top, var(--border), var(--border) 50%, transparent 50%);
 	background-position: top, bottom;
 	background-repeat: repeat-x;
 	background-size: 1px 2px;
@@ -433,6 +414,7 @@ i.icon-loading {
 .grouped-tableview + .grouped-tableview {
 	margin-top: 35px;
 }
+
 section.grouped-tableview {
 	font-size: 13px;
 	font: -apple-system-footnote;
@@ -444,67 +426,68 @@ section.grouped-tableview p {
 section.grouped-tableview p:last-child {
 	margin: 0;
 }
-ol.grouped-tableview,
-ul.grouped-tableview {
+
+ul.grouped-tableview,
+ol.grouped-tableview {
 	display: block;
 	list-style: none;
 	padding: 0;
 }
-ol.grouped-tableview li,
-ul.grouped-tableview li {
-	background-image: -webkit-linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
-	background-image: linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
+ul.grouped-tableview li,
+ol.grouped-tableview li {
+	background-image: linear-gradient(to top, var(--border), var(--border) 50%, transparent 50%);
 	background-position: 15px bottom;
 	background-repeat: no-repeat;
 	background-size: 100% 2px;
 	padding: 15px;
 }
-ol.grouped-tableview li:last-child,
-ul.grouped-tableview li:last-child {
+ul.grouped-tableview li:last-child,
+ol.grouped-tableview li:last-child {
 	background-position: 0 -1px;
 }
-ol.grouped-tableview-links,
-ul.grouped-tableview-links {
+
+ul.grouped-tableview-links,
+ol.grouped-tableview-links {
 	background-color: transparent;
 	background-image: none;
 }
-ol.grouped-tableview-links:before,
-ul.grouped-tableview-links:before {
+ul.grouped-tableview-links:before,
+ol.grouped-tableview-links:before {
 	content: '';
 	display: block;
 	height: 1px;
 	background-color: transparent;
-	background-image: -webkit-linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
-	background-image: linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
+	background-image: linear-gradient(to top, var(--border), var(--border) 50%, transparent 50%);
 	background-repeat: repeat-x;
 	background-position: bottom;
 	background-size: 1px 2px;
 }
-ol.grouped-tableview-links li,
-ul.grouped-tableview-links li {
+ul.grouped-tableview-links li,
+ol.grouped-tableview-links li {
 	padding: 0;
-	background-color: #fff;
+	background-color: var(--grouped-bg);
 }
-ol.grouped-tableview-links li:last-child,
-ul.grouped-tableview-links li:last-child {
+ul.grouped-tableview-links li:last-child,
+ol.grouped-tableview-links li:last-child {
 	background-position: bottom;
 }
-ol.grouped-tableview-links li > a,
-ul.grouped-tableview-links li > a {
-	-webkit-tap-highlight-color: transparent;
+ul.grouped-tableview-links li > a,
+ol.grouped-tableview-links li > a {
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	display: block;
 	padding: 15px;
 	text-decoration: none;
-	color: #000;
+	color: var(--text);
 	background: transparent url(../images/ios7/disclosure-indicator.png) no-repeat;
 	background-position: right 15px top 50%;
 	background-size: 8px 12.5px;
 	line-height: 1.2em;
 }
-ol.grouped-tableview-links li > a.tappable-active,
-ul.grouped-tableview-links li > a.tappable-active {
-	background-color: #d9d9d9;
+ul.grouped-tableview-links li > a:active,
+ol.grouped-tableview-links li > a:active {
+	background-color: var(--active-bg);
 }
+
 .view .post-content {
 	min-height: 5em;
 }
@@ -521,12 +504,12 @@ ul.grouped-tableview-links li > a.tappable-active {
 }
 .view .post-content header h1 {
 	font-size: 17px;
-	font-weight: 400;
+	font-weight: normal;
 	font: -apple-system-body;
 	line-height: 1.2em;
 }
 .view .post-content header a {
-	color: #000;
+	color: var(--text);
 	display: block;
 	text-decoration: none;
 }
@@ -534,7 +517,7 @@ ul.grouped-tableview-links li > a.tappable-active {
 	font-size: 13px;
 	font: -apple-system-footnote;
 	line-height: 1.2em;
-	color: #003d80;
+	color: var(--link-domain);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -544,8 +527,9 @@ ul.grouped-tableview-links li > a.tappable-active {
 	font-size: 13px;
 	font: -apple-system-footnote;
 	line-height: 1.4em;
-	color: #8e8e93;
+	color: var(--meta);
 }
+
 .view .post-content pre,
 .view section.comments pre {
 	-webkit-overflow-scrolling: touch;
@@ -553,9 +537,10 @@ ul.grouped-tableview-links li > a.tappable-active {
 	margin: 0 0 8px;
 	overflow: auto;
 	padding: 0.65em 0;
-	background-color: #eee;
+	background-color: var(--pre-bg);
 	border-radius: 3px;
 }
+
 .view .post-content .poll {
 	margin: 0;
 	padding: 0;
@@ -569,9 +554,9 @@ ul.grouped-tableview-links li > a.tappable-active {
 	width: 100%;
 }
 .view .post-content .poll li .poll-details b {
-	font-weight: 400;
+	font-weight: normal;
 	display: table-cell;
-	color: #333;
+	color: var(--poll-detail);
 }
 .view .post-content .poll li .poll-details .points {
 	display: table-cell;
@@ -581,29 +566,27 @@ ul.grouped-tableview-links li > a.tappable-active {
 	vertical-align: bottom;
 }
 .view .post-content .poll li .poll-bar {
-	background-color: #eee;
+	background-color: var(--pre-bg);
 	width: 100%;
 	height: 3px;
 	overflow: hidden;
 	border-radius: 3px;
 }
 .view .post-content .poll li .poll-bar span {
-	background-color: #007aff;
+	background-color: var(--link);
 	display: block;
 	width: 0;
 	height: 3px;
 }
+
 .view section.comments {
-	background-color: #fff;
+	background-color: var(--grouped-bg);
 	font-size: 13px;
 	font: -apple-system-footnote;
 	line-height: 1.4em;
 	background-image:
-		-webkit-linear-gradient(top, #c8c7cc, #c8c7cc 50%, transparent 50%),
-		-webkit-linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
-	background-image:
-		linear-gradient(top, #c8c7cc, #c8c7cc 50%, transparent 50%),
-		linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
+		linear-gradient(to bottom, var(--border), var(--border) 50%, transparent 50%),
+		linear-gradient(to top, var(--border), var(--border) 50%, transparent 50%);
 	background-position: top, bottom;
 	background-repeat: repeat-x;
 	background-size: 1px 2px;
@@ -621,8 +604,7 @@ ul.grouped-tableview-links li > a.tappable-active {
 }
 .view section.comments ul li {
 	padding: 15px;
-	background-image: -webkit-linear-gradient(top, #c8c7cc, #c8c7cc 50%, transparent 50%);
-	background-image: linear-gradient(top, #c8c7cc, #c8c7cc 50%, transparent 50%);
+	background-image: linear-gradient(to bottom, var(--border), var(--border) 50%, transparent 50%);
 	background-position: top;
 	background-repeat: repeat-x;
 	background-size: 1px 2px;
@@ -633,7 +615,7 @@ ul.grouped-tableview-links li > a.tappable-active {
 .view section.comments ul ul li {
 	padding: 0 0 0 14px;
 	border: 0;
-	color: #333;
+	color: var(--comment-nested);
 }
 .view section.comments p.metadata .collapse-parent {
 	float: left;
@@ -642,12 +624,12 @@ ul.grouped-tableview-links li > a.tappable-active {
 	margin: 2px 6px 0 -14px;
 	padding: 0;
 	border: 0;
-	background: 0 0;
+	background: transparent;
 	position: relative;
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
-.view section.comments p.metadata .collapse-parent::after,
-.view section.comments p.metadata .collapse-parent::before {
+.view section.comments p.metadata .collapse-parent::before,
+.view section.comments p.metadata .collapse-parent::after {
 	content: '';
 	position: absolute;
 	left: 2px;
@@ -655,7 +637,6 @@ ul.grouped-tableview-links li > a.tappable-active {
 	height: 8px;
 	border-top: 2px solid #888;
 	border-left: 2px solid #888;
-	-webkit-transform: rotate(45deg);
 	transform: rotate(45deg);
 }
 .view section.comments p.metadata .collapse-parent::before {
@@ -676,7 +657,7 @@ ul.grouped-tableview-links li > a.tappable-active {
 }
 .view section.comments p.metadata .user {
 	float: left;
-	color: #bf223f;
+	color: var(--comment-user);
 }
 .view section.comments p.metadata.deleted {
 	margin-bottom: 8px;
@@ -689,7 +670,7 @@ ul.grouped-tableview-links li > a.tappable-active {
 	display: inline-block;
 	font-size: 70%;
 	color: #fff;
-	background-color: #bf223f;
+	background-color: var(--comment-user);
 	padding: 3px 4px;
 	line-height: 1;
 	margin-left: 5px;
@@ -700,10 +681,10 @@ ul.grouped-tableview-links li > a.tappable-active {
 	text-align: right;
 }
 .view section.comments p.metadata time a {
-	color: #8e8e93;
+	color: var(--meta);
 }
 .view .post-content header .metadata a.external-link {
-	color: #8e8e93;
+	color: var(--meta);
 	text-decoration: none;
 	display: block;
 	overflow: hidden;
@@ -712,7 +693,6 @@ ul.grouped-tableview-links li > a.tappable-active {
 	padding-left: 16px;
 	background: transparent url(../images/ios7/external-arrow.png) no-repeat 0 50%;
 	background-size: 12px 9px;
-	image-rendering: -webkit-optimize-contrast;
 	image-rendering: crisp-edges;
 }
 .view section.comments button.comments-toggle {
@@ -724,16 +704,17 @@ ul.grouped-tableview-links li > a.tappable-active {
 	padding: 5px 10px;
 	font-size: inherit;
 	border-radius: 3px;
-	-webkit-tap-highlight-color: transparent;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	margin: 2px auto 4px;
-	color: #848484;
-	border: 1px solid #848484;
+	color: var(--toggle-color);
+	border: 1px solid var(--toggle-color);
 	background-color: transparent;
 	-webkit-user-select: none;
+	user-select: none;
 }
-.view section.comments button.comments-toggle.tappable-active {
+.view section.comments button.comments-toggle:active {
 	color: #fff;
-	background-color: #848484;
+	background-color: var(--toggle-color);
 }
 .view section.comments li.more-link-container {
 	padding: 0;
@@ -743,23 +724,24 @@ ul.grouped-tableview-links li > a.tappable-active {
 	cursor: pointer;
 	-webkit-touch-callout: none;
 	padding: 20px;
-	color: #000;
+	color: var(--text);
 }
-.view section.comments li > a.more-link.tappable-active {
-	background-color: #d9d9d9;
+.view section.comments li > a.more-link:active {
+	background-color: var(--active-bg);
 }
 .view section.comments p.no-comments {
 	text-align: center;
 	padding: 50px 0;
 	margin: 0;
-	color: #8e8e93;
+	color: var(--meta);
 	font-size: 17px;
 	font: -apple-system-body;
 }
-.view section.comments .load-error,
-.view section.comments .loader {
+.view section.comments .loader,
+.view section.comments .load-error {
 	padding-top: 50px;
 }
+
 .view section.comments .load-error button {
 	cursor: pointer;
 	-webkit-appearance: none;
@@ -768,47 +750,51 @@ ul.grouped-tableview-links li > a.tappable-active {
 	margin: 0;
 	padding: 0;
 	font-size: inherit;
-	color: #007aff;
+	color: var(--link);
 	background-color: transparent;
 	outline: 0;
 }
-.view section.comments .load-error button.tappable-active {
+.view section.comments .load-error button:active {
 	opacity: 0.205;
 }
+
 .foot-label {
 	margin: 0;
 	padding: 10px 15px;
 	color: #6d6d72;
 	font-size: 15px;
 	font: -apple-system-subheadline;
-	font-weight: 400;
+	font-weight: normal;
 	line-height: 1.2em;
 }
 .grouped-tableview + .foot-label {
 	margin-top: -34px;
 }
-.cf:after,
-.cf:before {
+
+.cf:before,
+.cf:after {
 	content: '';
 	display: table;
 }
 .cf:after {
 	clear: both;
 }
+
 #y-icon {
 	background: transparent url(../../icons/icon.svg) no-repeat;
 	background-size: 60px 60px;
 	width: 60px;
 	height: 60px;
 	float: left;
-	border: 1px solid #eee;
+	border: 1px solid var(--y-icon-border);
 	border-radius: 14px;
 }
+
 #app-desc {
 	margin: 0 0 0 70px;
 	font-size: 15px;
 	font: -apple-system-subheadline;
-	font-weight: 400;
+	font-weight: normal;
 	line-height: 1.2em;
 }
 #app-desc strong {
@@ -816,11 +802,12 @@ ul.grouped-tableview-links li > a.tappable-active {
 	font: -apple-system-body;
 	line-height: 1.3;
 }
+
+/* Shadow overlay on view edge during slide animations */
 .view:before {
 	content: '';
 	background-color: rgba(0, 0, 0, 0.095);
-	background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.18));
-	background-image: linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.18));
+	background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.18));
 	background-size: 9px 1px;
 	background-position: right;
 	background-repeat: repeat-y;
@@ -832,195 +819,196 @@ ul.grouped-tableview-links li > a.tappable-active {
 	pointer-events: none;
 	opacity: 0;
 }
-.slide-up,
+
+/* Animation timing */
 .view,
-.view:after,
 .view:before,
+.view:after,
 .view > .scroll,
 .view > header,
+.view > header h1,
 .view > header .header-button button,
-.view > header h1 {
-	-webkit-animation-timing-function: cubic-bezier(0.3, 0.5, 0, 1);
-	-webkit-animation-duration: 0.5s;
+.slide-up {
 	animation-timing-function: cubic-bezier(0.3, 0.5, 0, 1);
-	animation-duration: 0.5s;
+	animation-duration: 500ms;
 }
+
 .view {
-	-webkit-transition: -webkit-filter 0.5s;
-	transition-property: -webkit-filter, filter;
-	transition-duration: 0.5s;
+	transition-property: filter;
+	transition-duration: 500ms;
 }
+
 .view > .scroll,
 .view > .scroll > section {
-	-webkit-transform: translate3d(0, 0, 0);
 	transform: translate3d(0, 0, 0);
 }
-.no-pointer,
-.slide-in-from-left,
+
 .slide-in-from-right,
+.slide-in-from-left,
+.slide-out-to-right,
 .slide-out-to-left,
-.slide-out-to-right {
+.no-pointer {
 	pointer-events: none;
 }
+
+/* Slide-in-from-right animations */
 .slide-in-from-right:before {
-	-webkit-animation-name: slidefadeinfromright;
 	animation-name: slidefadeinfromright;
 }
 .slide-in-from-right > .scroll {
-	-webkit-animation-name: slideinfromright;
 	animation-name: slideinfromright;
 }
 .slide-in-from-right:after,
 .slide-in-from-right > header {
-	-webkit-animation-name: fadein;
 	animation-name: fadein;
 }
 .slide-in-from-right > header h1 {
-	-webkit-animation-name: slide60infromright;
 	animation-name: slide60infromright;
 }
 .slide-in-from-right > header .header-back-button button {
-	-webkit-animation-name: backinfromcenter;
 	animation-name: backinfromcenter;
 }
+
+/* Slide-in-from-left animations */
 .slide-in-from-left > .scroll {
-	-webkit-animation-name: slide33infromleft;
 	animation-name: slide33infromleft;
 }
 .slide-in-from-left > header h1 {
-	-webkit-animation-name: slide60infromleft;
 	animation-name: slide60infromleft;
 }
 .slide-in-from-left > header .header-back-button button {
-	-webkit-animation-name: backinfromleft;
 	animation-name: backinfromleft;
 }
+
+/* Slide-out-to-right animations */
 .slide-out-to-right:before {
-	-webkit-animation-name: slidefadeouttoright;
 	animation-name: slidefadeouttoright;
 }
 .slide-out-to-right > .scroll {
-	-webkit-animation-name: slideouttoright;
 	animation-name: slideouttoright;
 }
 .slide-out-to-right:after,
 .slide-out-to-right > header {
-	-webkit-animation-name: fadeout;
 	animation-name: fadeout;
 }
 .slide-out-to-right > header h1 {
-	-webkit-animation-name: slide60outtoright;
 	animation-name: slide60outtoright;
 }
 .slide-out-to-right > header .header-back-button button {
-	-webkit-animation-name: backouttocenter;
 	animation-name: backouttocenter;
 }
+
+/* Slide-out-to-left animations */
 .slide-out-to-left > .scroll {
-	-webkit-animation-name: slide33outtoleft;
 	animation-name: slide33outtoleft;
 }
 .slide-out-to-left > header h1 {
-	-webkit-animation-name: slide60outtoleft;
 	animation-name: slide60outtoleft;
 }
 .slide-out-to-left > header .header-back-button button {
-	-webkit-animation-name: backouttoleft;
 	animation-name: backouttoleft;
 }
+
+/* Slide up/down for about view */
 .slide-up {
-	-webkit-animation-name: slideup;
 	animation-name: slideup;
 }
 .slide-down {
-	-webkit-animation-name: slidedown;
 	animation-name: slidedown;
 }
-@-webkit-keyframes slideinfromright {
+
+/* Keyframes for .scroll */
+@keyframes slideinfromright {
 	from {
-		-webkit-transform: translate3d(100%, 0, 0);
+		transform: translate3d(100%, 0, 0);
 	}
 	to {
-		-webkit-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
 	}
 }
-@-webkit-keyframes slide33infromleft {
+@keyframes slide33infromleft {
 	from {
-		-webkit-transform: translate3d(-33%, 0, 0);
+		transform: translate3d(-33%, 0, 0);
 	}
 	to {
-		-webkit-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
 	}
 }
-@-webkit-keyframes slide33outtoleft {
+@keyframes slide33outtoleft {
 	from {
-		-webkit-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
 	}
 	to {
-		-webkit-transform: translate3d(-33%, 0, 0);
+		transform: translate3d(-33%, 0, 0);
 	}
 }
-@-webkit-keyframes slideouttoright {
+@keyframes slideouttoright {
 	from {
-		-webkit-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
 	}
 	to {
-		-webkit-transform: translate3d(100%, 0, 0);
+		transform: translate3d(100%, 0, 0);
 	}
 }
-@-webkit-keyframes slidefadeinfromright {
+
+/* Keyframes for scroll mask */
+@keyframes slidefadeinfromright {
 	from {
-		-webkit-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
 		opacity: 0;
 	}
 	to {
-		-webkit-transform: translate3d(-100%, 0, 0);
+		transform: translate3d(-100%, 0, 0);
 		opacity: 1;
 	}
 }
-@-webkit-keyframes slidefadeouttoright {
+@keyframes slidefadeouttoright {
 	from {
-		-webkit-transform: translate3d(-100%, 0, 0);
+		transform: translate3d(-100%, 0, 0);
 		opacity: 1;
 	}
 	to {
-		-webkit-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
 		opacity: 0;
 	}
 }
-@-webkit-keyframes slide60infromright {
+
+/* Keyframes for heading text */
+@keyframes slide60infromright {
 	from {
-		-webkit-transform: translate3d(60%, 0, 0);
+		transform: translate3d(60%, 0, 0);
 	}
 	to {
-		-webkit-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
 	}
 }
-@-webkit-keyframes slide60infromleft {
+@keyframes slide60infromleft {
 	from {
-		-webkit-transform: translate3d(-60%, 0, 0);
+		transform: translate3d(-60%, 0, 0);
 	}
 	to {
-		-webkit-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
 	}
 }
-@-webkit-keyframes slide60outtoleft {
+@keyframes slide60outtoleft {
 	from {
-		-webkit-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
 	}
 	to {
-		-webkit-transform: translate3d(-60%, 0, 0);
+		transform: translate3d(-60%, 0, 0);
 	}
 }
-@-webkit-keyframes slide60outtoright {
+@keyframes slide60outtoright {
 	from {
-		-webkit-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
 	}
 	to {
-		-webkit-transform: translate3d(60%, 0, 0);
+		transform: translate3d(60%, 0, 0);
 	}
 }
-@-webkit-keyframes fadein {
+
+/* Generic fade keyframes */
+@keyframes fadein {
 	from {
 		opacity: 0;
 	}
@@ -1028,7 +1016,7 @@ ul.grouped-tableview-links li > a.tappable-active {
 		opacity: 1;
 	}
 }
-@-webkit-keyframes fadeout {
+@keyframes fadeout {
 	from {
 		opacity: 1;
 	}
@@ -1036,74 +1024,78 @@ ul.grouped-tableview-links li > a.tappable-active {
 		opacity: 0;
 	}
 }
-@-webkit-keyframes backinfromcenter {
+
+/* Keyframes for back button */
+@keyframes backinfromcenter {
 	from {
-		-webkit-transform: translate3d(200%, 0, 0);
+		transform: translate3d(200%, 0, 0);
 	}
 	to {
-		-webkit-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
 	}
 }
-@-webkit-keyframes backinfromleft {
+@keyframes backinfromleft {
 	from {
-		-webkit-transform: translate3d(-100%, 0, 0);
+		transform: translate3d(-100%, 0, 0);
 	}
 	to {
-		-webkit-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
 	}
 }
-@-webkit-keyframes backouttocenter {
+@keyframes backouttocenter {
 	from {
-		-webkit-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
 	}
 	to {
-		-webkit-transform: translate3d(200%, 0, 0);
+		transform: translate3d(200%, 0, 0);
 	}
 }
-@-webkit-keyframes backouttoleft {
+@keyframes backouttoleft {
 	from {
-		-webkit-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
 	}
 	to {
-		-webkit-transform: translate3d(-100%, 0, 0);
+		transform: translate3d(-100%, 0, 0);
 	}
 }
-@-webkit-keyframes slideup {
+
+/* Slide up/down */
+@keyframes slideup {
 	from {
-		-webkit-transform: translate3d(0, 100%, 0);
+		transform: translate3d(0, 100%, 0);
 	}
 	to {
-		-webkit-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
 	}
 }
-@-webkit-keyframes slidedown {
+@keyframes slidedown {
 	from {
-		-webkit-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
 	}
 	to {
-		-webkit-transform: translate3d(0, 100%, 0);
+		transform: translate3d(0, 100%, 0);
 	}
 }
+
+/* Retina / high-DPI */
 @media only screen and (-webkit-min-device-pixel-ratio: 1.5),
 	only screen and (min-resolution: 144dpi) {
 	.view:after {
 		width: 200%;
-		-webkit-transform: scale(0.5);
 		transform: scale(0.5);
-		-webkit-transform-origin: 0 0;
 		transform-origin: 0 0;
 	}
-	.grouped-tableview,
 	.tableview-links li:not(:first-child) > a:first-child:before,
-	.view section.comments,
-	.view section.comments ul li,
+	.grouped-tableview,
+	ul.grouped-tableview-links:before,
 	ol.grouped-tableview-links:before,
-	ul.grouped-tableview-links:before {
+	.view section.comments,
+	.view section.comments ul li {
 		background-size: 1px 1px;
 	}
 	.tableview li,
-	ol.grouped-tableview li,
-	ul.grouped-tableview li {
+	ul.grouped-tableview li,
+	ol.grouped-tableview li {
 		background-size: 100% 1px;
 	}
 	.view section.comments button.comments-toggle {
@@ -1118,31 +1110,30 @@ ul.grouped-tableview-links li > a.tappable-active {
 		box-sizing: border-box;
 		width: 200%;
 		height: 200%;
-		border: 1px solid #848484;
+		border: 1px solid var(--toggle-color);
 		border-radius: 6px;
-		-webkit-transform: scale(0.5);
 		transform: scale(0.5);
-		-webkit-transform-origin: 0 0;
 		transform-origin: 0 0;
 	}
 }
+
+/* Wide screen / tablet layout */
 @media only screen and (min-width: 737px) {
 	.view:after {
-		-webkit-transform-origin: bottom left;
 		transform-origin: bottom left;
 	}
 	.tableview-links li > a.selected:visited {
-		color: #000;
+		color: var(--text);
 	}
-	#view-comments > header,
-	#view-home > header {
+	#view-home > header,
+	#view-comments > header {
 		position: absolute;
 		bottom: 0;
 		width: 100%;
 		box-sizing: border-box;
 	}
-	#view-comments:after,
-	#view-home:after {
+	#view-home:after,
+	#view-comments:after {
 		top: auto;
 		bottom: 44px;
 	}
@@ -1156,7 +1147,7 @@ ul.grouped-tableview-links li > a.tappable-active {
 		display: none;
 	}
 	#view-home > .scroll {
-		border-right: 1px solid #8e8e93;
+		border-right: 1px solid var(--meta);
 	}
 	#view-comments {
 		left: 301px;
@@ -1175,31 +1166,32 @@ ul.grouped-tableview-links li > a.tappable-active {
 		text-align: left;
 		margin-left: 44px !important;
 		margin-right: 10px !important;
-		font-weight: 400;
+		font-weight: normal;
 	}
+
 	.view-blank-state {
-		display: -webkit-flex;
 		display: flex;
 		height: 100%;
 	}
 	.view-blank-state-text {
 		margin: auto;
 		-webkit-user-select: none;
+		user-select: none;
 		text-align: center;
-		color: #8e8e93;
+		color: var(--meta);
 		font-size: 17px;
-		font-weight: 400;
+		font-weight: normal;
 		font: -apple-system-body;
 	}
+
 	#overlay {
 		position: absolute;
 		top: 0;
 		z-index: 100;
 		width: 100%;
 		height: 100%;
-		background-color: rgba(0, 2, 8, 0.5);
+		background-color: var(--overlay-bg);
 		opacity: 1;
-		-webkit-transition: opacity 350ms ease-in-out;
 		transition: opacity 350ms ease-in-out;
 	}
 	#overlay.hide {
@@ -1215,16 +1207,13 @@ ul.grouped-tableview-links li > a.tappable-active {
 		top: 50%;
 		margin-top: -200px;
 		z-index: 101;
-		-webkit-transform: translateY(0);
 		transform: translateY(0);
 		box-sizing: border-box;
 	}
 	#view-about.animated {
-		-webkit-transition: -webkit-transform 350ms;
-		transition: -webkit-transform 350ms;
+		transition: transform 350ms;
 	}
 	#view-about.hidden {
-		-webkit-transform: translateY(220%);
 		transform: translateY(220%);
 	}
 	#view-about > .scroll > section {
@@ -1244,111 +1233,61 @@ ul.grouped-tableview-links li > a.tappable-active {
 	#view-about .foot-label {
 		padding-bottom: 34px;
 	}
+
 	#app-desc {
 		margin-left: 86px;
 	}
 }
+
+/* Dark mode */
 @media (prefers-color-scheme: dark) {
-	body {
-		color: #fff;
-		background-color: #1c1c1e;
+	:root {
+		--bg: #1c1c1e;
+		--text: #fff;
+		--header-bg: #2c2c2e;
+		--header-bg-shaded: #2c2c2e;
+		--separator: rgba(255, 255, 255, 0.15);
+		--link: #1684ff;
+		--link-domain: #2988cf;
+		--meta: #8e8e93;
+		--border: #3a3a3c;
+		--active-bg: #48484a;
+		--tableview-bg: #1c1c1e;
+		--grouped-bg: #2c2c2e;
+		--shaded-bg: #1c1c1e;
+		--pre-bg: #48484a;
+		--comment-user: #e84f66;
+		--comment-nested: #f2f2f7;
+		--poll-detail: #f2f2f7;
+		--toggle-color: #848484;
+		--y-icon-border: #48484a;
 	}
-	#apploader {
-		background-color: #1c1c1e;
-	}
-	.link-text,
-	a {
-		color: #1684ff;
-	}
-	.view.shaded > header,
-	.view > header {
-		background-color: #2c2c2e;
-	}
+
 	.view > header .header-button {
 		filter: brightness(1.1);
 	}
-	.view:after {
-		background-color: rgba(255, 255, 255, 0.15);
-	}
-	.tableview,
-	.view.shaded > .scroll {
-		background-color: #1c1c1e;
-	}
-	.tableview li {
-		background-image: -webkit-linear-gradient(bottom, #3a3a3c, #3a3a3c 50%, transparent 50%);
-		background-image: linear-gradient(bottom, #3a3a3c, #3a3a3c 50%, transparent 50%);
-	}
-	.tableview-links li > a {
-		color: #fff;
-	}
-	.tableview-links li > a .metadata .link-text,
-	.view .post-content header a .link-text {
-		color: #2988cf;
+
+	.view section.comments ul li {
+		background-image: linear-gradient(to bottom, #48484a, #48484a 50%, transparent 50%);
 	}
 	.tableview-links li:not(:first-child) > a:first-child:before {
-		background-image: -webkit-linear-gradient(bottom, #48484a, #48484a 50%, transparent 50%);
-		background-image: linear-gradient(bottom, #48484a, #48484a 50%, transparent 50%);
-	}
-	.tableview-links li > a.selected,
-	.tableview-links li > a.tappable-active {
-		background-color: #48484a;
+		background-image: linear-gradient(to top, #48484a, #48484a 50%, transparent 50%);
 	}
 	.grouped-tableview {
-		background-color: #2c2c2e;
 		background-image:
-			-webkit-linear-gradient(top, #3a3a3c, #3a3a3c 50%, transparent 50%),
-			-webkit-linear-gradient(bottom, #3a3a3c, #3a3a3c 50%, transparent 50%);
-		background-image:
-			linear-gradient(top, #3a3a3c, #3a3a3c 50%, transparent 50%),
-			linear-gradient(bottom, #3a3a3c, #3a3a3c 50%, transparent 50%);
+			linear-gradient(to bottom, #3a3a3c, #3a3a3c 50%, transparent 50%),
+			linear-gradient(to top, #3a3a3c, #3a3a3c 50%, transparent 50%);
 	}
-	ol.grouped-tableview li,
-	ol.grouped-tableview-links:before,
 	ul.grouped-tableview li,
-	ul.grouped-tableview-links:before {
-		background-image: -webkit-linear-gradient(bottom, #3a3a3c, #3a3a3c 50%, transparent 50%);
-		background-image: linear-gradient(bottom, #3a3a3c, #3a3a3c 50%, transparent 50%);
-	}
-	ol.grouped-tableview-links li,
-	ul.grouped-tableview-links li {
-		background-color: #2c2c2e;
-	}
-	ol.grouped-tableview-links li > a,
-	ul.grouped-tableview-links li > a {
-		color: #fff;
-	}
-	ol.grouped-tableview-links li > a.tappable-active,
-	ul.grouped-tableview-links li > a.tappable-active {
-		background-color: #48484a;
-	}
-	.view .post-content header a {
-		color: #fff;
-	}
-	.view .post-content pre,
-	.view section.comments pre {
-		background-color: #48484a;
+	ol.grouped-tableview li,
+	ul.grouped-tableview-links:before,
+	ol.grouped-tableview-links:before {
+		background-image: linear-gradient(to top, #3a3a3c, #3a3a3c 50%, transparent 50%);
 	}
 	.view section.comments {
-		background-color: #2c2c2e;
 		background-image:
-			-webkit-linear-gradient(top, #48484a, #48484a 50%, transparent 50%),
-			-webkit-linear-gradient(bottom, #48484a, #48484a 50%, transparent 50%);
-		background-image:
-			linear-gradient(top, #48484a, #48484a 50%, transparent 50%),
-			linear-gradient(bottom, #48484a, #48484a 50%, transparent 50%);
-	}
-	.view section.comments ul li {
-		background-image: -webkit-linear-gradient(top, #48484a, #48484a 50%, transparent 50%);
-		background-image: linear-gradient(top, #48484a, #48484a 50%, transparent 50%);
-	}
-	.view section.comments ul ul li {
-		color: #f2f2f7;
-	}
-	.view section.comments p.metadata .user {
-		color: #e84f66;
-	}
-	.view section.comments p.metadata .user.op:after {
-		background-color: #e84f66;
+			linear-gradient(to bottom, #48484a, #48484a 50%, transparent 50%),
+			linear-gradient(to top, #48484a, #48484a 50%, transparent 50%);
 	}
 	.view section.comments .load-error button {
 		filter: brightness(1.1);
@@ -1357,14 +1296,14 @@ ul.grouped-tableview-links li > a.tappable-active {
 		.tableview-links li > a.selected:visited {
 			color: #fff;
 		}
-		#view-home > .scroll,
-		#view-home > header {
+		#view-home > header,
+		#view-home > .scroll {
 			border-right-color: #48484a;
 		}
 	}
-	#view-about .header-button-left button,
-	#view-comments .header-button-left button,
 	.icon-refresh,
+	#view-comments .header-button-left button,
+	#view-about .header-button-left button,
 	.tableview-links li > a.detail-disclosure-button {
 		filter: brightness(1.1);
 	}

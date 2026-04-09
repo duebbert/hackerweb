@@ -1,29 +1,10 @@
-import { hw, $, amplify, ruto } from './hw.js';
-import tappable from './libs/tappable.js';
-import TWEEN from './libs/tween.js';
-import './libs/requestanimationframe.js';
+import { hw, $, store, router } from './hw.js';
 
 (function (w) {
 	var d = w.document;
 	var body = d.body;
 
-	var pfx = ['webkit', 'moz', 'MS', 'o', ''];
-	var pfxLength = pfx.length;
-	var prefixedAddEvent = function (element, type, callback) {
-		for (var p = 0; p < pfxLength; p++) {
-			if (!pfx[p]) type = type.toLowerCase();
-			element.addEventListener(pfx[p] + type, callback, false);
-		}
-	};
-	var prefixedRemoveEvent = function (element, type, callback) {
-		for (var p = 0; p < pfxLength; p++) {
-			if (!pfx[p]) type = type.toLowerCase();
-			element.removeEventListener(pfx[p] + type, callback, false);
-		}
-	};
-
 	var slideWise = {
-		// outEl, inEl
 		rtl: ['slide-out-to-left', 'slide-in-from-right'],
 		ltr: ['slide-out-to-right', 'slide-in-from-left'],
 	};
@@ -38,9 +19,8 @@ import './libs/requestanimationframe.js';
 			outClass.add('hidden');
 			outClass.remove(wise[0]);
 			inClass.remove(wise[1]);
-			prefixedRemoveEvent(inEl, 'AnimationEnd', reset);
 		};
-		prefixedAddEvent(inEl, 'AnimationEnd', reset);
+		inEl.addEventListener('animationend', reset, { once: true });
 		inClass.remove('hidden');
 		inClass.add(wise[1]);
 		outClass.add(wise[0]);
@@ -61,9 +41,8 @@ import './libs/requestanimationframe.js';
 				outClass.remove('slide-down');
 				outClass.add('hidden');
 				inClass.remove('no-pointer');
-				prefixedRemoveEvent(outEl, 'AnimationEnd', resetDown);
 			};
-			prefixedAddEvent(outEl, 'AnimationEnd', resetDown);
+			outEl.addEventListener('animationend', resetDown, { once: true });
 			outClass.remove('slide-up');
 			outClass.add('slide-down');
 		}
@@ -73,15 +52,14 @@ import './libs/requestanimationframe.js';
 		return (body.offsetWidth || w.innerWidth) > 736 ? 'wide' : 'narrow';
 	};
 
-	// Disable user scale of the viewport
+	// Set viewport meta
 	var vmeta = d.querySelector('meta[name=viewport]');
 	if (!vmeta) {
 		vmeta = d.createElement('meta');
 		vmeta.name = 'viewport';
 		d.head.appendChild(vmeta);
 	}
-	vmeta.content =
-		'width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0';
+	vmeta.content = 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0';
 
 	// Wide screen state
 	var isWideScreen = getScreenState() == 'wide';
@@ -93,21 +71,21 @@ import './libs/requestanimationframe.js';
 		}
 	});
 
-	// Inject some elements for additional iOS decorations
+	// Overlay for wide screen
 	if (isWideScreen) body.insertAdjacentHTML('beforeend', '<div id="overlay" class="hide"></div>');
 
-	// Detect if swiping from screen edges to navigate back/forward
+	// Detect swiping from screen edges (back/forward nav)
 	var swipeNav = false;
-	document.addEventListener('touchstart', function (e) {
+	d.addEventListener('touchstart', function (e) {
 		var touch = e.targetTouches[0];
 		var x = touch.clientX;
-		if (x < 20 || x > window.innerWidth - 20) swipeNav = true;
+		if (x < 20 || x > w.innerWidth - 20) swipeNav = true;
 	});
-	document.addEventListener('touchend', function (e) {
+	d.addEventListener('touchend', function () {
 		swipeNav = false;
 	});
 
-	ruto.config({
+	router.config({
 		before: function (path, name, matches) {
 			var previousView = (hw.previousView = hw.currentView);
 			var currentView = (hw.currentView = name);
@@ -198,7 +176,7 @@ import './libs/requestanimationframe.js';
 		},
 	});
 
-	// Remember scroll tops of each views
+	// Remember scroll tops of each view
 	w.addEventListener(
 		'pagehide',
 		function () {
@@ -208,12 +186,12 @@ import './libs/requestanimationframe.js';
 				var view = views[i];
 				hackerScrollTops[view.id] = view.querySelector('.scroll section').scrollTop || 0;
 			}
-			amplify.store('hacker-scrolltops', hackerScrollTops);
+			store('hacker-scrolltops', hackerScrollTops);
 		},
 		false,
 	);
 	var restoreScrollTops = function () {
-		var hackerScrollTops = amplify.store('hacker-scrolltops');
+		var hackerScrollTops = store('hacker-scrolltops');
 		for (var id in hackerScrollTops) {
 			var section = $(id).querySelector('.scroll section');
 			section.scrollTop = hackerScrollTops[id];
@@ -222,121 +200,79 @@ import './libs/requestanimationframe.js';
 	w.addEventListener('pageshow', restoreScrollTops, false);
 	restoreScrollTops();
 
-	tappable('.view>header a.header-button[href]', {
-		noScroll: true,
-		onTap: function (e, target) {
-			var hash = target.hash;
-			if (isWideScreen && /about/i.test(ruto.current) && hash == '#/') {
-				ruto.back('/');
-			} else {
-				location.hash = hash;
-			}
-		},
+	// Event delegation helper
+	var on = function (selector, event, fn) {
+		d.body.addEventListener(
+			event,
+			function (e) {
+				var target = e.target.closest(selector);
+				if (target) fn(e, target);
+			},
+			false,
+		);
+	};
+
+	// Header button navigation
+	on('.view>header a.header-button[href]', 'click', function (e, target) {
+		e.preventDefault();
+		var hash = target.hash;
+		if (isWideScreen && /about/i.test(router.current) && hash == '#/') {
+			router.back('/');
+		} else {
+			location.hash = hash;
+		}
 	});
 
-	tappable('#view-home-refresh', {
-		noScroll: true,
-		onTap: hw.news.reload,
+	// Refresh button
+	on('#view-home-refresh', 'click', function (e) {
+		e.preventDefault();
+		hw.news.reload();
 	});
 
-	var scrollingToTop = false;
-	tappable('.view>header h1', {
-		onTap: function (e, target) {
-			var section = target.parentNode.nextElementSibling.firstElementChild;
-			if (section.scrollTop == 0 || scrollingToTop) return;
-			if (scrollingToTop) return;
-			scrollingToTop = true;
-			var originalOverflow = section.style.overflow;
-			section.style.overflow = 'hidden';
-			setTimeout(function () {
-				section.style.overflow = originalOverflow;
-				var raf;
-				var tween = new TWEEN.Tween({ scrollTop: section.scrollTop })
-					.to({ scrollTop: 0 }, 300)
-					.easing(TWEEN.Easing.Cubic.InOut)
-					.onUpdate(function () {
-						section.scrollTop = this.scrollTop;
-					})
-					.onComplete(function () {
-						cancelAnimationFrame(raf);
-						tween.stop();
-						scrollingToTop = false;
-						tween = null;
-					})
-					.start();
-				var step = function () {
-					TWEEN.update();
-					requestAnimationFrame(step);
-				};
-				raf = requestAnimationFrame(step);
-			}, 200);
-		},
+	// Scroll to top on header h1 tap
+	on('.view>header h1', 'click', function (e, target) {
+		var section = target.parentNode.nextElementSibling.firstElementChild;
+		if (section.scrollTop == 0) return;
+		section.scrollTo({ top: 0, behavior: 'smooth' });
 	});
 
-	var listTappedDelay;
-	tappable('#view-home .tableview-links li>a:first-child', {
-		allowClick: !isWideScreen,
-		activeClassDelay: 100,
-		inactiveClassDelay: isWideScreen ? 100 : 1000,
-		onStart: function (e, target) {
-			if (isWideScreen) {
-				var ul = target.parentNode;
-				if (ul) {
-					ul = ul.parentNode;
-					listTappedDelay = setTimeout(function () {
-						if (ul) ul.classList.add('list-tapped');
-					}, 100);
-				}
-			}
-		},
-		onMove: function () {
-			if (!isWideScreen) return;
-			clearTimeout(listTappedDelay);
-		},
-		onEnd: function (e, target) {
-			if (!isWideScreen) return;
-			clearTimeout(listTappedDelay);
-			var ul = target.parentNode.parentNode;
-			setTimeout(function () {
-				if (ul) ul.classList.remove('list-tapped');
-			}, 100);
-		},
-		onTap: function (e, target) {
-			if (target.classList.contains('more-link')) {
-				hw.news.more(target);
-			} else if (/^#\//.test(target.getAttribute('href'))) {
-				location.hash = target.hash;
-			} else if (target.href && isWideScreen) {
-				w.open(target.href);
-			}
-		},
-	});
-
-	tappable('#view-about .grouped-tableview-links li>a:first-child', {
-		allowClick: true,
-		activeClassDelay: 100,
-		inactiveClassDelay: 1000,
-	});
-
-	tappable('#view-home .tableview-links li>a.detail-disclosure-button', {
-		noScroll: true,
-		noScrollDelay: 100,
-		onTap: function (e, target) {
-			if (hw.currentView == 'comments') return;
+	// Story list clicks
+	on('#view-home .tableview-links li>a:first-child', 'click', function (e, target) {
+		if (target.classList.contains('more-link')) {
+			e.preventDefault();
+			hw.news.more(target);
+		} else if (/^#\//.test(target.getAttribute('href'))) {
+			e.preventDefault();
 			location.hash = target.hash;
-		},
+		} else if (target.href && isWideScreen) {
+			e.preventDefault();
+			w.open(target.href);
+		}
 	});
 
-	tappable('button.comments-toggle', function (e, target) {
+	// Detail disclosure button
+	on('#view-home .tableview-links li>a.detail-disclosure-button', 'click', function (e, target) {
+		e.preventDefault();
+		if (hw.currentView == 'comments') return;
+		location.hash = target.hash;
+	});
+
+	// Comment toggle
+	on('button.comments-toggle', 'click', function (e, target) {
 		hw.comments.toggle(target);
 	});
 
-	tappable('button.collapse-parent', function (e, target) {
+	// Collapse parent comment
+	on('button.collapse-parent', 'click', function (e, target) {
 		hw.comments.collapseParent(target);
 	});
 
-	tappable('#view-comments .load-error button', hw.comments.reload);
+	// Retry loading comments
+	on('#view-comments .load-error button', 'click', function () {
+		hw.comments.reload();
+	});
 
+	// Select current story in wide screen
 	hw.sub('selectCurrentStory', function (id) {
 		if (!isWideScreen) return;
 		if (!id) id = (location.hash.match(/item\/(\d+)/) || [, ''])[1];
@@ -350,7 +286,7 @@ import './libs/requestanimationframe.js';
 		if (link) {
 			link.classList.add('selected');
 			setTimeout(function () {
-				link.scrollIntoViewIfNeeded ? link.scrollIntoViewIfNeeded() : link.scrollIntoView();
+				link.scrollIntoView({ block: 'nearest' });
 			}, 1);
 		}
 	});
@@ -358,11 +294,12 @@ import './libs/requestanimationframe.js';
 		hw.pub('selectCurrentStory');
 	});
 
+	// Auto-reload when returning to page if cache expired
 	w.addEventListener(
 		'pageshow',
 		function () {
 			setTimeout(function () {
-				if (hw.currentView == 'home' && $('hwlist') && !amplify.store('hacker-news-cached')) {
+				if (hw.currentView == 'home' && $('hwlist') && !store('hacker-news-cached')) {
 					hw.news.reload();
 				}
 			}, 1);

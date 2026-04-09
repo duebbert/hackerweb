@@ -1,327 +1,218 @@
-import Hogan from './libs/hogan.js';
+function escapeHTML(str) {
+	if (str == null) return '';
+	return String(str)
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#39;');
+}
+
+function renderCommentsToggle(data) {
+	return (
+		'<button class="comments-toggle">' +
+		escapeHTML(data.comments_count) +
+		' ' +
+		escapeHTML(data.i_reply) +
+		'</button>'
+	);
+}
+
+function renderCommentsList(data) {
+	if (!data.comments || !data.comments.length) return '';
+	var html = '';
+	for (var i = 0; i < data.comments.length; i++) {
+		var c = data.comments[i];
+		html += '<li><p class="metadata ' + (c.deleted ? 'deleted' : '') + '">';
+		html += '<button class="collapse-parent" aria-label="Collapse thread"></button>';
+		if (c.deleted) {
+			html += '<span>[deleted]</span>';
+		} else {
+			html +=
+				'<a href="https://news.ycombinator.com/user?id=' +
+				escapeHTML(c.user) +
+				'" target="_blank"><b class="user">' +
+				escapeHTML(c.user) +
+				'</b></a>';
+		}
+		html +=
+			'<time><a href="https://news.ycombinator.com/item?id=' +
+			escapeHTML(c.id) +
+			'" target="_blank">' +
+			escapeHTML(c.time_ago) +
+			'</a></time></p>';
+		if (!c.deleted) {
+			html += '<p>' + (c.content || '') + '<ul>' + renderCommentsList(c) + '</ul>';
+		}
+		html += '</li>';
+	}
+	return html;
+}
+
+function renderPostComments(data) {
+	var html = '<div class="post-content">';
+
+	if (data.has_post) {
+		html += '<header><a href="' + escapeHTML(data.url) + '" target="_blank">';
+		html += '<h1>' + escapeHTML(data.title) + '</h1>';
+		if (data.user && data.domain) {
+			html += '<span class="link-text">' + escapeHTML(data.domain) + '</span>';
+		}
+		html += '</a><p class="metadata">';
+		if (data.user) {
+			html +=
+				'<span class="inline-block">' +
+				escapeHTML(data.points) +
+				' ' +
+				escapeHTML(data.i_point) +
+				' by ' +
+				escapeHTML(data.user) +
+				'</span> <span class="inline-block">' +
+				escapeHTML(data.time_ago);
+			if (data.comments_count) {
+				html += ' &middot; ' + escapeHTML(data.comments_count) + ' ' + escapeHTML(data.i_comment);
+			}
+			html += '</span>';
+		} else {
+			html += '<span class="inline-block">' + escapeHTML(data.time_ago) + '</span>';
+		}
+		html +=
+			'<a href="' +
+			escapeHTML(data.hn_url) +
+			'" target="_blank" class="external-link">' +
+			escapeHTML(data.short_hn_url) +
+			'</a></p></header>';
+	}
+
+	if (data.has_content) {
+		html += '<section class="grouped-tableview">';
+		html += data.content || '';
+		if (data.has_poll) {
+			html += '<ul class="poll">';
+			if (data.poll) {
+				for (var i = 0; i < data.poll.length; i++) {
+					var p = data.poll[i];
+					html +=
+						'<li title="' +
+						escapeHTML(p.percentage) +
+						'%"><span class="poll-details"><b>' +
+						escapeHTML(p.item) +
+						'</b> <span class="points">' +
+						escapeHTML(p.points) +
+						' ' +
+						escapeHTML(p.i_point) +
+						'</span></span><div class="poll-bar"><span style="width: ' +
+						escapeHTML(p.width) +
+						'"></span></div></li>';
+				}
+			}
+			html += '</ul>';
+		}
+		html += '</section>';
+	}
+
+	html += '</div><section class="comments">';
+
+	if (data.loading) {
+		html += '<div class="loader"><i class="icon-loading"></i> Loading&hellip;</div>';
+	}
+	if (data.load_error) {
+		html += '<div class="load-error">Couldn\'t load comments.<br><button>Try again</button></div>';
+	}
+	if (!data.loading && !data.load_error) {
+		if (data.has_comments) {
+			html += '<ul>' + renderCommentsList(data) + '</ul>';
+		} else {
+			html += '<p class="no-comments">No comments.</p>';
+		}
+	}
+
+	html += '</section>';
+	return html;
+}
+
+function renderPost(item) {
+	var html =
+		'<li id="story-' +
+		escapeHTML(item.id) +
+		'" data-index="' +
+		escapeHTML(item.i) +
+		'" class="post-' +
+		escapeHTML(item.type) +
+		'"><a href="' +
+		escapeHTML(item.url) +
+		'"';
+	if (item.external) {
+		html += ' target="_blank" rel="noopener"';
+	}
+	html += ' class="';
+	if (item.detail_disclosure) html += 'detail-disclosure';
+	if (item.disclosure) html += 'disclosure';
+	html += ' ';
+	if (item.selected) html += 'selected';
+	html +=
+		'"><div class="number">' +
+		escapeHTML(item.i) +
+		'</div><div class="story"><b>' +
+		escapeHTML(item.title) +
+		'</b>';
+
+	if (item.user) {
+		html += '<div class="metadata">';
+		if (item.domain) {
+			html += '<div class="link-text">' + escapeHTML(item.domain) + '</div>';
+		}
+		html +=
+			'<span class="inline-block">' +
+			escapeHTML(item.points) +
+			' ' +
+			escapeHTML(item.i_point) +
+			' by ' +
+			escapeHTML(item.user) +
+			'</span> <span class="inline-block">' +
+			escapeHTML(item.time_ago);
+		if (!item.detail_disclosure && item.comments_count) {
+			html += ' &middot; ' + escapeHTML(item.comments_count) + ' ' + escapeHTML(item.i_comment);
+		}
+		html += '</span></div>';
+	} else {
+		html += '<div class="metadata">';
+		if (item.domain) {
+			html += '<span class="link-text">' + escapeHTML(item.domain) + '</span><br>';
+		}
+		html += '<span class="inline-block">' + escapeHTML(item.time_ago) + '</span></div>';
+	}
+
+	html += '</div></a>';
+	if (item.detail_disclosure) {
+		html +=
+			'<a href="#/item/' +
+			escapeHTML(item.id) +
+			'" class="detail-disclosure-button"><span></span><b class="comments-count">' +
+			escapeHTML(item.comments_count) +
+			'</b></a>';
+	}
+	html += '</li>';
+	return html;
+}
+
+function renderStoriesLoad(data) {
+	var html = '';
+	if (data.loading) {
+		html += '<div class="loader"><i class="icon-loading"></i> Loading&hellip;</div>';
+	}
+	if (data.load_error) {
+		html += '<div class="load-error">Couldn\'t load stories.</div>';
+	}
+	return html;
+}
 
 var TEMPLATES = {
-	'comments-toggle': new Hogan.Template({
-		code: function (c, p, i) {
-			var t = this;
-			t.b((i = i || ''));
-			t.b('<button class="comments-toggle">');
-			t.b(t.v(t.f('comments_count', c, p, 0)));
-			t.b(' ');
-			t.b(t.v(t.f('i_reply', c, p, 0)));
-			t.b('</button>');
-			return t.fl();
-		},
-		partials: {},
-		subs: {},
-	}),
-	comments: new Hogan.Template({
-		code: function (c, p, i) {
-			var t = this;
-			t.b((i = i || ''));
-			if (t.s(t.f('comments', c, p, 1), c, p, 0, 13, 488, '{{ }}')) {
-				t.rs(c, p, function (c, p, t) {
-					t.b('<li><p class="metadata ');
-					if (t.s(t.f('deleted', c, p, 1), c, p, 0, 48, 55, '{{ }}')) {
-						t.rs(c, p, function (c, p, t) {
-							t.b('deleted');
-						});
-						c.pop();
-					}
-					t.b('"><button class="collapse-parent" aria-label="Collapse thread"></button>');
-					if (t.s(t.f('deleted', c, p, 1), c, p, 0, 151, 173, '{{ }}')) {
-						t.rs(c, p, function (c, p, t) {
-							t.b('<span>[deleted]</span>');
-						});
-						c.pop();
-					}
-					if (!t.s(t.f('deleted', c, p, 1), c, p, 1, 0, 0, '')) {
-						t.b('<a href="https://news.ycombinator.com/user?id=');
-						t.b(t.v(t.f('user', c, p, 0)));
-						t.b('" target="_blank"><b class="user">');
-						t.b(t.v(t.f('user', c, p, 0)));
-						t.b('</b></a>');
-					}
-					t.b('<time><a href="https://news.ycombinator.com/item?id=');
-					t.b(t.v(t.f('id', c, p, 0)));
-					t.b('" target="_blank">');
-					t.b(t.v(t.f('time_ago', c, p, 0)));
-					t.b('</a></time></p>');
-					if (!t.s(t.f('deleted', c, p, 1), c, p, 1, 0, 0, '')) {
-						t.b('<p>');
-						t.b(t.t(t.f('content', c, p, 0)));
-						t.b('<ul>');
-						t.b(t.rp('<comments_list0', c, p, ''));
-						t.b('</ul>');
-					}
-					t.b('</li>');
-				});
-				c.pop();
-			}
-			return t.fl();
-		},
-		partials: { '<comments_list0': { name: 'comments_list', partials: {}, subs: {} } },
-		subs: {},
-	}),
-	'post-comments': new Hogan.Template({
-		code: function (c, p, i) {
-			var t = this;
-			t.b((i = i || ''));
-			t.b('<div class="post-content">');
-			if (t.s(t.f('has_post', c, p, 1), c, p, 0, 39, 573, '{{ }}')) {
-				t.rs(c, p, function (c, p, t) {
-					t.b('<header><a href="');
-					t.b(t.v(t.f('url', c, p, 0)));
-					t.b('" target="_blank"><h1>');
-					t.b(t.v(t.f('title', c, p, 0)));
-					t.b('</h1>');
-					if (t.s(t.f('user', c, p, 1), c, p, 0, 108, 171, '{{ }}')) {
-						t.rs(c, p, function (c, p, t) {
-							if (t.s(t.f('domain', c, p, 1), c, p, 0, 119, 160, '{{ }}')) {
-								t.rs(c, p, function (c, p, t) {
-									t.b('<span class="link-text">');
-									t.b(t.v(t.f('domain', c, p, 0)));
-									t.b('</span>');
-								});
-								c.pop();
-							}
-						});
-						c.pop();
-					}
-					t.b('</a><p class="metadata">');
-					if (t.s(t.f('user', c, p, 1), c, p, 0, 213, 408, '{{ }}')) {
-						t.rs(c, p, function (c, p, t) {
-							t.b('<span class="inline-block">');
-							t.b(t.v(t.f('points', c, p, 0)));
-							t.b(' ');
-							t.b(t.v(t.f('i_point', c, p, 0)));
-							t.b(' by ');
-							t.b(t.v(t.f('user', c, p, 0)));
-							t.b('</span> <span class="inline-block">');
-							t.b(t.v(t.f('time_ago', c, p, 0)));
-							if (t.s(t.f('comments_count', c, p, 1), c, p, 0, 340, 382, '{{ }}')) {
-								t.rs(c, p, function (c, p, t) {
-									t.b(' &middot; ');
-									t.b(t.v(t.f('comments_count', c, p, 0)));
-									t.b(' ');
-									t.b(t.v(t.f('i_comment', c, p, 0)));
-								});
-								c.pop();
-							}
-							t.b('</span>');
-						});
-						c.pop();
-					}
-					if (!t.s(t.f('user', c, p, 1), c, p, 1, 0, 0, '')) {
-						t.b('<span class="inline-block">');
-						t.b(t.v(t.f('time_ago', c, p, 0)));
-						t.b('</span>');
-					}
-					t.b('<a href="');
-					t.b(t.v(t.f('hn_url', c, p, 0)));
-					t.b('" target="_blank" class="external-link">');
-					t.b(t.v(t.f('short_hn_url', c, p, 0)));
-					t.b('</a></p></header>');
-				});
-				c.pop();
-			}
-			if (t.s(t.f('has_content', c, p, 1), c, p, 0, 602, 925, '{{ }}')) {
-				t.rs(c, p, function (c, p, t) {
-					t.b('<section class="grouped-tableview">');
-					t.b(t.t(t.f('content', c, p, 0)));
-					if (t.s(t.f('has_poll', c, p, 1), c, p, 0, 663, 902, '{{ }}')) {
-						t.rs(c, p, function (c, p, t) {
-							t.b('<ul class="poll">');
-							if (t.s(t.f('poll', c, p, 1), c, p, 0, 689, 888, '{{ }}')) {
-								t.rs(c, p, function (c, p, t) {
-									t.b('<li title="');
-									t.b(t.v(t.f('percentage', c, p, 0)));
-									t.b('%"><span class="poll-details"><b>');
-									t.b(t.v(t.f('item', c, p, 0)));
-									t.b('</b> <span class="points">');
-									t.b(t.v(t.f('points', c, p, 0)));
-									t.b(' ');
-									t.b(t.v(t.f('i_point', c, p, 0)));
-									t.b('</span></span><div class="poll-bar"><span style="width: ');
-									t.b(t.v(t.f('width', c, p, 0)));
-									t.b('"></span></div></li>');
-								});
-								c.pop();
-							}
-							t.b('</ul>');
-						});
-						c.pop();
-					}
-					t.b('</section>');
-				});
-				c.pop();
-			}
-			t.b('</div><section class="comments">');
-			if (t.s(t.f('loading', c, p, 1), c, p, 0, 985, 1055, '{{ }}')) {
-				t.rs(c, p, function (c, p, t) {
-					t.b('<div class="loader"><i class="icon-loading"></i> Loading&hellip;</div>');
-				});
-				c.pop();
-			}
-			if (t.s(t.f('load_error', c, p, 1), c, p, 0, 1082, 1165, '{{ }}')) {
-				t.rs(c, p, function (c, p, t) {
-					t.b(
-						'<div class="load-error">Couldn\'t load comments.<br><button>Try again</button></div>',
-					);
-				});
-				c.pop();
-			}
-			if (!t.s(t.f('loading', c, p, 1), c, p, 1, 0, 0, '')) {
-				if (!t.s(t.f('load_error', c, p, 1), c, p, 1, 0, 0, '')) {
-					if (t.s(t.f('has_comments', c, p, 1), c, p, 0, 1224, 1251, '{{ }}')) {
-						t.rs(c, p, function (c, p, t) {
-							t.b('<ul>');
-							t.b(t.rp('<comments_list0', c, p, ''));
-							t.b('</ul>');
-						});
-						c.pop();
-					}
-					if (!t.s(t.f('has_comments', c, p, 1), c, p, 1, 0, 0, '')) {
-						t.b('<p class="no-comments">No comments.</p>');
-					}
-				}
-			}
-			t.b('</section>');
-			return t.fl();
-		},
-		partials: { '<comments_list0': { name: 'comments_list', partials: {}, subs: {} } },
-		subs: {},
-	}),
-	post: new Hogan.Template({
-		code: function (c, p, i) {
-			var t = this;
-			t.b((i = i || ''));
-			t.b('<li id="story-');
-			t.b(t.v(t.f('id', c, p, 0)));
-			t.b('" data-index="');
-			t.b(t.v(t.f('i', c, p, 0)));
-			t.b('" class="post-');
-			t.b(t.v(t.f('type', c, p, 0)));
-			t.b('"><a href="');
-			t.b(t.v(t.f('url', c, p, 0)));
-			t.b('"');
-			if (t.s(t.f('external', c, p, 1), c, p, 0, 93, 124, '{{ }}')) {
-				t.rs(c, p, function (c, p, t) {
-					t.b(' target="_blank" rel="noopener"');
-				});
-				c.pop();
-			}
-			t.b(' class="');
-			if (t.s(t.f('detail_disclosure', c, p, 1), c, p, 0, 167, 184, '{{ }}')) {
-				t.rs(c, p, function (c, p, t) {
-					t.b('detail-disclosure');
-				});
-				c.pop();
-			}
-			if (t.s(t.f('disclosure', c, p, 1), c, p, 0, 221, 231, '{{ }}')) {
-				t.rs(c, p, function (c, p, t) {
-					t.b('disclosure');
-				});
-				c.pop();
-			}
-			t.b(' ');
-			if (t.s(t.f('selected', c, p, 1), c, p, 0, 260, 268, '{{ }}')) {
-				t.rs(c, p, function (c, p, t) {
-					t.b('selected');
-				});
-				c.pop();
-			}
-			t.b('"><div class="number">');
-			t.b(t.v(t.f('i', c, p, 0)));
-			t.b('</div><div class="story"><b>');
-			t.b(t.v(t.f('title', c, p, 0)));
-			t.b('</b>');
-			if (t.s(t.f('user', c, p, 1), c, p, 0, 358, 686, '{{ }}')) {
-				t.rs(c, p, function (c, p, t) {
-					t.b('<div class="metadata">');
-					if (t.s(t.f('domain', c, p, 1), c, p, 0, 391, 430, '{{ }}')) {
-						t.rs(c, p, function (c, p, t) {
-							t.b('<div class="link-text">');
-							t.b(t.v(t.f('domain', c, p, 0)));
-							t.b('</div>');
-						});
-						c.pop();
-					}
-					t.b('<span class="inline-block">');
-					t.b(t.v(t.f('points', c, p, 0)));
-					t.b(' ');
-					t.b(t.v(t.f('i_point', c, p, 0)));
-					t.b(' by ');
-					t.b(t.v(t.f('user', c, p, 0)));
-					t.b('</span> <span class="inline-block">');
-					t.b(t.v(t.f('time_ago', c, p, 0)));
-					if (!t.s(t.f('detail_disclosure', c, p, 1), c, p, 1, 0, 0, '')) {
-						if (t.s(t.f('comments_count', c, p, 1), c, p, 0, 590, 632, '{{ }}')) {
-							t.rs(c, p, function (c, p, t) {
-								t.b(' &middot; ');
-								t.b(t.v(t.f('comments_count', c, p, 0)));
-								t.b(' ');
-								t.b(t.v(t.f('i_comment', c, p, 0)));
-							});
-							c.pop();
-						}
-					}
-					t.b('</span></div>');
-				});
-				c.pop();
-			}
-			if (!t.s(t.f('user', c, p, 1), c, p, 1, 0, 0, '')) {
-				t.b('<div class="metadata">');
-				if (t.s(t.f('domain', c, p, 1), c, p, 0, 737, 782, '{{ }}')) {
-					t.rs(c, p, function (c, p, t) {
-						t.b('<span class="link-text">');
-						t.b(t.v(t.f('domain', c, p, 0)));
-						t.b('</span><br>');
-					});
-					c.pop();
-				}
-				t.b('<span class="inline-block">');
-				t.b(t.v(t.f('time_ago', c, p, 0)));
-				t.b('</span></div>');
-			}
-			t.b('</div></a>');
-			if (t.s(t.f('detail_disclosure', c, p, 1), c, p, 0, 886, 1008, '{{ }}')) {
-				t.rs(c, p, function (c, p, t) {
-					t.b('<a href="#/item/');
-					t.b(t.v(t.f('id', c, p, 0)));
-					t.b('" class="detail-disclosure-button"><span></span><b class="comments-count">');
-					t.b(t.v(t.f('comments_count', c, p, 0)));
-					t.b('</b></a>');
-				});
-				c.pop();
-			}
-			t.b('</li>');
-			return t.fl();
-		},
-		partials: {},
-		subs: {},
-	}),
-	'stories-load': new Hogan.Template({
-		code: function (c, p, i) {
-			var t = this;
-			t.b((i = i || ''));
-			if (t.s(t.f('loading', c, p, 1), c, p, 0, 12, 82, '{{ }}')) {
-				t.rs(c, p, function (c, p, t) {
-					t.b('<div class="loader"><i class="icon-loading"></i> Loading&hellip;</div>');
-				});
-				c.pop();
-			}
-			if (t.s(t.f('load_error', c, p, 1), c, p, 0, 109, 161, '{{ }}')) {
-				t.rs(c, p, function (c, p, t) {
-					t.b('<div class="load-error">Couldn\'t load stories.</div>');
-				});
-				c.pop();
-			}
-			return t.fl();
-		},
-		partials: {},
-		subs: {},
-	}),
+	'comments-toggle': renderCommentsToggle,
+	comments: renderCommentsList,
+	'post-comments': renderPostComments,
+	post: renderPost,
+	'stories-load': renderStoriesLoad,
 };
 
 export default TEMPLATES;
