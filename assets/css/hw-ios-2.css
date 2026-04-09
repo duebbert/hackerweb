@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inconsolata&display=swap');
 
-html{
+html {
 	height: 100%;
 	overflow: hidden;
 }
-body{
+body {
 	font-family: -apple-system-font, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	font-size: 17px;
 	margin: 0;
@@ -17,30 +17,31 @@ body{
 	overflow: hidden;
 }
 
-a{
+a {
 	color: #007aff;
 	text-decoration: none;
-	-webkit-tap-highlight-color: rgba(0,0,0,.1);
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
 
-pre{
+pre {
 	word-wrap: normal;
 	overflow-wrap: normal;
 	line-height: 1.2em;
 }
-pre, code{
-	font-family: Inconsolata, Consolas, "Lucida Console", monospace;
+pre,
+code {
+	font-family: Inconsolata, Consolas, 'Lucida Console', monospace;
 }
 
-.link-text{
+.link-text {
 	color: #007aff;
 }
 
-.inline-block{
+.inline-block {
 	display: inline-block;
 }
 
-i.icon-refresh{
+i.icon-refresh {
 	display: inline-block;
 	width: 14px;
 	height: 17px;
@@ -53,7 +54,7 @@ i.icon-refresh{
 	-webkit-transform: translateY(-3px);
 }
 
-i.icon-loading{
+i.icon-loading {
 	display: inline-block;
 	width: 20px;
 	height: 20px;
@@ -64,37 +65,89 @@ i.icon-loading{
 	animation: loading-sprite 1s step-start infinite;
 }
 @-webkit-keyframes loading-sprite {
-	0% { background-position: 0 0; }
-	8.33% { background-position: 0 -20px; }
-	16.67% { background-position: 0 -40px; }
-	25% { background-position: 0 -60px; }
-	33.33% { background-position: 0 -80px; }
-	41.67% { background-position: 0 -100px; }
-	50% { background-position: 0 -120px; }
-	58.33% { background-position: 0 -140px; }
-	66.67% { background-position: 0 -160px; }
-	75% { background-position: 0 -180px; }
-	83.33% { background-position: 0 -200px; }
-	91.67% { background-position: 0 -220px; }
-	100% { background-position: 0 0; }
+	0% {
+		background-position: 0 0;
+	}
+	8.33% {
+		background-position: 0 -20px;
+	}
+	16.67% {
+		background-position: 0 -40px;
+	}
+	25% {
+		background-position: 0 -60px;
+	}
+	33.33% {
+		background-position: 0 -80px;
+	}
+	41.67% {
+		background-position: 0 -100px;
+	}
+	50% {
+		background-position: 0 -120px;
+	}
+	58.33% {
+		background-position: 0 -140px;
+	}
+	66.67% {
+		background-position: 0 -160px;
+	}
+	75% {
+		background-position: 0 -180px;
+	}
+	83.33% {
+		background-position: 0 -200px;
+	}
+	91.67% {
+		background-position: 0 -220px;
+	}
+	100% {
+		background-position: 0 0;
+	}
 }
 @keyframes loading-sprite {
-	0% { background-position: 0 0; }
-	8.33% { background-position: 0 -20px; }
-	16.67% { background-position: 0 -40px; }
-	25% { background-position: 0 -60px; }
-	33.33% { background-position: 0 -80px; }
-	41.67% { background-position: 0 -100px; }
-	50% { background-position: 0 -120px; }
-	58.33% { background-position: 0 -140px; }
-	66.67% { background-position: 0 -160px; }
-	75% { background-position: 0 -180px; }
-	83.33% { background-position: 0 -200px; }
-	91.67% { background-position: 0 -220px; }
-	100% { background-position: 0 0; }
+	0% {
+		background-position: 0 0;
+	}
+	8.33% {
+		background-position: 0 -20px;
+	}
+	16.67% {
+		background-position: 0 -40px;
+	}
+	25% {
+		background-position: 0 -60px;
+	}
+	33.33% {
+		background-position: 0 -80px;
+	}
+	41.67% {
+		background-position: 0 -100px;
+	}
+	50% {
+		background-position: 0 -120px;
+	}
+	58.33% {
+		background-position: 0 -140px;
+	}
+	66.67% {
+		background-position: 0 -160px;
+	}
+	75% {
+		background-position: 0 -180px;
+	}
+	83.33% {
+		background-position: 0 -200px;
+	}
+	91.67% {
+		background-position: 0 -220px;
+	}
+	100% {
+		background-position: 0 0;
+	}
 }
 
-.view{
+.view {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -103,13 +156,13 @@ i.icon-loading{
 	overflow: hidden;
 	z-index: 2;
 }
-.view.hidden{
+.view.hidden {
 	-webkit-transform: translate3d(-100%, -100%, 0);
 	transform: translate3d(-100%, -100%, 0);
 	pointer-events: none;
 }
 
-.view>header{
+.view > header {
 	height: 44px;
 	min-height: 44px;
 	max-height: 44px;
@@ -118,20 +171,20 @@ i.icon-loading{
 	-webkit-user-select: none;
 	-webkit-touch-callout: none;
 }
-.view:after{
+.view:after {
 	content: '';
 	position: absolute;
 	top: 44px;
 	width: 100%;
 	height: 1px;
-	background-color: rgba(0,0,0,.3);
+	background-color: rgba(0, 0, 0, 0.3);
 	z-index: 3;
 }
-.view.shaded>header{
+.view.shaded > header {
 	background-color: #f6f6f7;
 }
 
-.view>header .header-button{
+.view > header .header-button {
 	cursor: pointer;
 	text-decoration: none;
 	position: absolute;
@@ -139,22 +192,22 @@ i.icon-loading{
 	padding: 0 8px;
 	color: #007aff;
 	font-style: normal;
-	-webkit-transition: opacity .3s;
-	transition: opacity .3s;
-	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	-webkit-transition: opacity 0.3s;
+	transition: opacity 0.3s;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
-.view>header .header-button.tappable-active{
-	opacity: .205;
+.view > header .header-button.tappable-active {
+	opacity: 0.205;
 	-webkit-transition-duration: 0;
 	transition-duration: 0;
 }
-.view>header .header-button-left{
+.view > header .header-button-left {
 	left: 0;
 }
-.view>header .header-button-right{
+.view > header .header-button-right {
 	right: 0;
 }
-.view>header .header-button button{
+.view > header .header-button button {
 	outline: 0;
 	cursor: pointer;
 	-webkit-appearance: none;
@@ -168,19 +221,19 @@ i.icon-loading{
 	display: block;
 	white-space: nowrap;
 }
-.view>header .header-button button>i{
+.view > header .header-button button > i {
 	margin: 0 7px;
 }
-.view>header .header-back-button{
+.view > header .header-back-button {
 	background: transparent url(../images/ios7/back-icon.png) no-repeat center left;
 	background-size: 12.5px 20.5px;
 	background-position: 8px center;
 }
-.view>header .header-back-button button{
+.view > header .header-back-button button {
 	padding-left: 19px;
 }
 
-.view>header h1{
+.view > header h1 {
 	font-size: 17px;
 	text-align: center;
 	white-space: nowrap;
@@ -190,21 +243,22 @@ i.icon-loading{
 	padding: 0;
 }
 
-.view>.scroll{
+.view > .scroll {
 	height: calc(100% - 44px);
 	overflow: auto;
 	-webkit-overflow-scrolling: touch;
 }
-.view>.scroll>section{ /* Double overflow-scrolling */
+.view > .scroll > section {
+	/* Double overflow-scrolling */
 	height: 100%;
 	overflow: auto;
 	-webkit-overflow-scrolling: touch;
 }
-.view.shaded>.scroll{
+.view.shaded > .scroll {
 	background-color: #efeff4;
 }
-.view>.scroll .loader,
-.view>.scroll .load-error{
+.view > .scroll .loader,
+.view > .scroll .load-error {
 	padding: 100px 0 50px;
 	-webkit-user-select: none;
 	text-align: center;
@@ -214,14 +268,14 @@ i.icon-loading{
 	font: -apple-system-body;
 }
 
-.tableview{
+.tableview {
 	margin: 0;
 	padding: 0;
 	list-style: none;
 	background-color: #fff;
 	-webkit-user-select: none;
 }
-.tableview li{
+.tableview li {
 	display: block;
 	background-image: -webkit-linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
 	background-image: linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
@@ -229,11 +283,11 @@ i.icon-loading{
 	background-repeat: no-repeat;
 	background-size: 100% 2px;
 }
-.tableview-links li{
+.tableview-links li {
 	display: -webkit-flex;
 	display: flex;
 }
-.tableview-links li>a{
+.tableview-links li > a {
 	display: -webkit-flex;
 	display: flex;
 	font-size: 17px;
@@ -242,28 +296,28 @@ i.icon-loading{
 	color: #000;
 	padding: 10px 10px 10px 15px;
 	text-decoration: none;
-	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	box-sizing: border-box;
 	width: 100%;
 }
-.tableview-links li>a:visited{
+.tableview-links li > a:visited {
 	color: #8e8e93;
 }
-.tableview-links li>a .number{
+.tableview-links li > a .number {
 	text-align: center;
 	min-width: 2.5ex;
 	padding-right: 10px;
 	color: #8e8e93;
 }
-.tableview-links li>a .story{
+.tableview-links li > a .story {
 	-webkit-flex-grow: 1;
 	flex-grow: 1;
 	min-width: 0;
 }
-.tableview-links li>a .story>b{
+.tableview-links li > a .story > b {
 	font-weight: normal;
 }
-.tableview-links li>a .metadata{
+.tableview-links li > a .metadata {
 	margin-top: 1px;
 	font-size: 13px;
 	font: -apple-system-footnote;
@@ -271,14 +325,14 @@ i.icon-loading{
 	display: block;
 	color: #8e8e93;
 }
-.tableview-links li>a .metadata .link-text{
+.tableview-links li > a .metadata .link-text {
 	color: #003d80;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	display: block;
 }
-.tableview-links li:not(:first-child)>a:first-child:before{
+.tableview-links li:not(:first-child) > a:first-child:before {
 	pointer-events: none;
 	content: '';
 	width: 100%;
@@ -293,19 +347,19 @@ i.icon-loading{
 	transform: translateY(-11px);
 	opacity: 0;
 }
-.tableview-links li>a.tappable-active,
-.tableview-links li>a.selected{
+.tableview-links li > a.tappable-active,
+.tableview-links li > a.selected {
 	background-color: #d9d9d9;
 }
-.tableview-links li:not(:first-child)>a.tappable-active:first-child:before{
+.tableview-links li:not(:first-child) > a.tappable-active:first-child:before {
 	opacity: 1;
 }
-.tableview-links li>a.detail-disclosure{
+.tableview-links li > a.detail-disclosure {
 	-webkit-flex-grow: 1;
 	flex-grow: 1;
 	padding-right: 44px;
 }
-.tableview-links li>a.detail-disclosure-button{
+.tableview-links li > a.detail-disclosure-button {
 	-webkit-touch-callout: none;
 	padding: 0;
 	margin-left: -44px;
@@ -314,17 +368,17 @@ i.icon-loading{
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	-webkit-transition: opacity .3s;
-	transition: opacity .3s;
+	-webkit-transition: opacity 0.3s;
+	transition: opacity 0.3s;
 }
-.tableview-links li>a.detail-disclosure-button span{
+.tableview-links li > a.detail-disclosure-button span {
 	display: block;
 	width: 20px;
 	height: 19px;
 	background: transparent url(../images/ios7/comment-button.png) no-repeat;
 	background-size: 20px 19px;
 }
-.tableview-links li>a.detail-disclosure-button .comments-count{
+.tableview-links li > a.detail-disclosure-button .comments-count {
 	display: block;
 	font-size: 13px;
 	font-weight: normal;
@@ -332,25 +386,25 @@ i.icon-loading{
 	margin-top: 6px;
 	color: #888;
 }
-.tableview-links li>a.detail-disclosure-button.tappable-active{
-	opacity: .205;
+.tableview-links li > a.detail-disclosure-button.tappable-active {
+	opacity: 0.205;
 	-webkit-transition-duration: 0;
 	transition-duration: 0;
 	background-color: transparent;
 }
-.tableview-links li>a.disclosure{
+.tableview-links li > a.disclosure {
 	-webkit-flex-grow: 1;
 	flex-grow: 1;
 	padding-right: 15px;
 }
-.tableview-links li>a.disclosure:after{
+.tableview-links li > a.disclosure:after {
 	pointer-events: none;
 	content: '';
 	width: 30px; /* 22 (spacing) + 8 (width) */
 	background: transparent url(../images/ios7/disclosure-indicator.png) no-repeat center right;
 	background-size: 8px 12.5px;
 }
-.tableview-links li>a.more-link{
+.tableview-links li > a.more-link {
 	cursor: pointer;
 	-webkit-touch-callout: none;
 	display: block;
@@ -360,57 +414,61 @@ i.icon-loading{
 	display: -webkit-flex;
 	display: flex;
 }
-.tableview-links li>a.more-link:before{
+.tableview-links li > a.more-link:before {
 	content: none !important;
 }
-.tableview-links li>a.more-link .loader{
+.tableview-links li > a.more-link .loader {
 	display: none;
 	padding: 0;
 	text-align: right;
 	-webkit-flex-grow: 1;
 	flex-grow: 1;
 }
-.tableview-links li>a.more-link.loading .loader{
+.tableview-links li > a.more-link.loading .loader {
 	display: block;
 }
 
-.grouped-tableview{
+.grouped-tableview {
 	background-color: #fff;
-	background-image: -webkit-linear-gradient(top, #c8c7cc, #c8c7cc 50%, transparent 50%), -webkit-linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
-	background-image: linear-gradient(top, #c8c7cc, #c8c7cc 50%, transparent 50%), linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
+	background-image:
+		-webkit-linear-gradient(top, #c8c7cc, #c8c7cc 50%, transparent 50%),
+		-webkit-linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
+	background-image:
+		linear-gradient(top, #c8c7cc, #c8c7cc 50%, transparent 50%),
+		linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
 	background-position: top, bottom;
 	background-repeat: repeat-x;
 	background-size: 1px 2px;
 	padding: 10px 13px;
 	margin: 0 0 34px;
 }
-.grouped-tableview:first-child{
+.grouped-tableview:first-child {
 	margin-top: 34px;
 }
-.grouped-tableview+.grouped-tableview{
+.grouped-tableview + .grouped-tableview {
 	margin-top: 35px;
 }
 
-section.grouped-tableview{
+section.grouped-tableview {
 	font-size: 13px;
 	font: -apple-system-footnote;
 	line-height: 1.4em;
 }
-section.grouped-tableview p{
+section.grouped-tableview p {
 	margin: 0 0 1em;
 }
-section.grouped-tableview p:last-child{
+section.grouped-tableview p:last-child {
 	margin: 0;
 }
 
 ul.grouped-tableview,
-ol.grouped-tableview{
+ol.grouped-tableview {
 	display: block;
 	list-style: none;
 	padding: 0;
 }
 ul.grouped-tableview li,
-ol.grouped-tableview li{
+ol.grouped-tableview li {
 	background-image: -webkit-linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
 	background-image: linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
 	background-position: 15px bottom;
@@ -419,17 +477,17 @@ ol.grouped-tableview li{
 	padding: 15px;
 }
 ul.grouped-tableview li:last-child,
-ol.grouped-tableview li:last-child{
+ol.grouped-tableview li:last-child {
 	background-position: 0 -1px;
 }
 
 ul.grouped-tableview-links,
-ol.grouped-tableview-links{
+ol.grouped-tableview-links {
 	background-color: transparent;
 	background-image: none;
 }
 ul.grouped-tableview-links:before,
-ol.grouped-tableview-links:before{
+ol.grouped-tableview-links:before {
 	content: '';
 	display: block;
 	height: 1px;
@@ -441,17 +499,17 @@ ol.grouped-tableview-links:before{
 	background-size: 1px 2px;
 }
 ul.grouped-tableview-links li,
-ol.grouped-tableview-links li{
+ol.grouped-tableview-links li {
 	padding: 0;
 	background-color: #fff;
 }
 ul.grouped-tableview-links li:last-child,
-ol.grouped-tableview-links li:last-child{
+ol.grouped-tableview-links li:last-child {
 	background-position: bottom;
 }
-ul.grouped-tableview-links li>a,
-ol.grouped-tableview-links li>a{
-	-webkit-tap-highlight-color: rgba(0,0,0,0);
+ul.grouped-tableview-links li > a,
+ol.grouped-tableview-links li > a {
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	display: block;
 	padding: 15px;
 	text-decoration: none;
@@ -461,37 +519,37 @@ ol.grouped-tableview-links li>a{
 	background-size: 8px 12.5px;
 	line-height: 1.2em;
 }
-ul.grouped-tableview-links li>a.tappable-active,
-ol.grouped-tableview-links li>a.tappable-active{
+ul.grouped-tableview-links li > a.tappable-active,
+ol.grouped-tableview-links li > a.tappable-active {
 	background-color: #d9d9d9;
 }
 
-.view .post-content{
+.view .post-content {
 	min-height: 5em;
 }
-.view .post-content header{
+.view .post-content header {
 	padding: 15px;
 	font-size: 17px;
 	font: -apple-system-body;
 	line-height: 1.2em;
 }
 .view .post-content header h1,
-.view .post-content header p{
+.view .post-content header p {
 	margin: 0;
 	padding: 0;
 }
-.view .post-content header h1{
+.view .post-content header h1 {
 	font-size: 17px;
 	font-weight: normal;
 	font: -apple-system-body;
 	line-height: 1.2em;
 }
-.view .post-content header a{
+.view .post-content header a {
 	color: #000;
 	display: block;
 	text-decoration: none;
 }
-.view .post-content header a .link-text{
+.view .post-content header a .link-text {
 	font-size: 13px;
 	font: -apple-system-footnote;
 	line-height: 1.2em;
@@ -501,7 +559,7 @@ ol.grouped-tableview-links li>a.tappable-active{
 	text-overflow: ellipsis;
 	display: block;
 }
-.view .post-content header .metadata{
+.view .post-content header .metadata {
 	font-size: 13px;
 	font: -apple-system-footnote;
 	line-height: 1.4em;
@@ -509,77 +567,81 @@ ol.grouped-tableview-links li>a.tappable-active{
 }
 
 .view .post-content pre,
-.view section.comments pre{
+.view section.comments pre {
 	-webkit-overflow-scrolling: touch;
 	font-size: inherit;
 	margin: 0 0 8px;
 	overflow: auto;
-	padding: .65em 0;
+	padding: 0.65em 0;
 	background-color: #eee;
 	border-radius: 3px;
 }
 
-.view .post-content .poll{
+.view .post-content .poll {
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
-.view .post-content .poll li{
+.view .post-content .poll li {
 	margin-bottom: 9px;
 }
-.view .post-content .poll li .poll-details{
+.view .post-content .poll li .poll-details {
 	display: table;
 	width: 100%;
 }
-.view .post-content .poll li .poll-details b{
+.view .post-content .poll li .poll-details b {
 	font-weight: normal;
 	display: table-cell;
 	color: #333;
 }
-.view .post-content .poll li .poll-details .points{
+.view .post-content .poll li .poll-details .points {
 	display: table-cell;
 	white-space: nowrap;
 	color: #888;
 	text-align: right;
 	vertical-align: bottom;
 }
-.view .post-content .poll li .poll-bar{
+.view .post-content .poll li .poll-bar {
 	background-color: #eee;
 	width: 100%;
 	height: 3px;
 	overflow: hidden;
 	border-radius: 3px;
 }
-.view .post-content .poll li .poll-bar span{
+.view .post-content .poll li .poll-bar span {
 	background-color: #007aff;
 	display: block;
 	width: 0;
 	height: 3px;
 }
 
-.view section.comments{
+.view section.comments {
 	background-color: #fff;
 	font-size: 13px;
 	font: -apple-system-footnote;
 	line-height: 1.4em;
-	background-image: -webkit-linear-gradient(top, #c8c7cc, #c8c7cc 50%, transparent 50%), -webkit-linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
-	background-image: linear-gradient(top, #c8c7cc, #c8c7cc 50%, transparent 50%), linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
+	background-image:
+		-webkit-linear-gradient(top, #c8c7cc, #c8c7cc 50%, transparent 50%),
+		-webkit-linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
+	background-image:
+		linear-gradient(top, #c8c7cc, #c8c7cc 50%, transparent 50%),
+		linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
 	background-position: top, bottom;
 	background-repeat: repeat-x;
 	background-size: 1px 2px;
 	margin-bottom: 30px;
 }
-.view section.comments>*{
+.view section.comments > * {
 	font-size: 110%;
 	line-height: 1.3em;
 }
-.view section.comments ul{
+.view section.comments ul {
 	margin: 0 auto;
 	padding: 0;
 	list-style: none;
 	max-width: 88ex;
 }
-.view section.comments ul li{
+.view section.comments ul li {
 	padding: 15px;
 	background-image: -webkit-linear-gradient(top, #c8c7cc, #c8c7cc 50%, transparent 50%);
 	background-image: linear-gradient(top, #c8c7cc, #c8c7cc 50%, transparent 50%);
@@ -587,15 +649,15 @@ ol.grouped-tableview-links li>a.tappable-active{
 	background-repeat: repeat-x;
 	background-size: 1px 2px;
 }
-.view section.comments>ul>li:first-child{
+.view section.comments > ul > li:first-child {
 	background-image: none;
 }
-.view section.comments ul ul li{
+.view section.comments ul ul li {
 	padding: 0 0 0 14px;
 	border: 0;
 	color: #333;
 }
-.view section.comments p.metadata .collapse-parent{
+.view section.comments p.metadata .collapse-parent {
 	float: left;
 	width: 14px;
 	height: 16px;
@@ -604,10 +666,10 @@ ol.grouped-tableview-links li>a.tappable-active{
 	border: 0;
 	background: transparent;
 	position: relative;
-	-webkit-tap-highlight-color: rgba(0,0,0,0.1);
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
 .view section.comments p.metadata .collapse-parent::before,
-.view section.comments p.metadata .collapse-parent::after{
+.view section.comments p.metadata .collapse-parent::after {
 	content: '';
 	position: absolute;
 	left: 2px;
@@ -618,29 +680,33 @@ ol.grouped-tableview-links li>a.tappable-active{
 	-webkit-transform: rotate(45deg);
 	transform: rotate(45deg);
 }
-.view section.comments p.metadata .collapse-parent::before{ top: 5px; }
-.view section.comments p.metadata .collapse-parent::after{ top: 10px; }
-.view section.comments > ul > li > p.metadata > .collapse-parent{
+.view section.comments p.metadata .collapse-parent::before {
+	top: 5px;
+}
+.view section.comments p.metadata .collapse-parent::after {
+	top: 10px;
+}
+.view section.comments > ul > li > p.metadata > .collapse-parent {
 	display: none;
 }
-.view section.comments p{
+.view section.comments p {
 	margin: 8px 0;
 }
-.view section.comments p.metadata{
+.view section.comments p.metadata {
 	padding: 0;
 	margin: 0;
 }
-.view section.comments p.metadata .user{
+.view section.comments p.metadata .user {
 	float: left;
 	color: #bf223f;
 }
-.view section.comments p.metadata.deleted{
+.view section.comments p.metadata.deleted {
 	margin-bottom: 8px;
 }
-.view section.comments p.metadata.deleted span{
+.view section.comments p.metadata.deleted span {
 	float: left;
 }
-.view section.comments p.metadata .user.op:after{
+.view section.comments p.metadata .user.op:after {
 	content: 'OP';
 	display: inline-block;
 	font-size: 70%;
@@ -651,14 +717,14 @@ ol.grouped-tableview-links li>a.tappable-active{
 	margin-left: 5px;
 	border-radius: 2px;
 }
-.view section.comments p.metadata time{
+.view section.comments p.metadata time {
 	display: block;
 	text-align: right;
 }
-.view section.comments p.metadata time a{
+.view section.comments p.metadata time a {
 	color: #8e8e93;
 }
-.view .post-content header .metadata a.external-link{
+.view .post-content header .metadata a.external-link {
 	color: #8e8e93;
 	text-decoration: none;
 	display: block;
@@ -671,7 +737,7 @@ ol.grouped-tableview-links li>a.tappable-active{
 	image-rendering: -webkit-optimize-contrast;
 	image-rendering: crisp-edges;
 }
-.view section.comments button.comments-toggle{
+.view section.comments button.comments-toggle {
 	outline: 0;
 	display: block;
 	width: 100%;
@@ -680,31 +746,31 @@ ol.grouped-tableview-links li>a.tappable-active{
 	padding: 5px 10px;
 	font-size: inherit;
 	border-radius: 3px;
-	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	margin: 2px auto 4px;
 	color: #848484;
 	border: 1px solid #848484;
 	background-color: transparent;
 	-webkit-user-select: none;
 }
-.view section.comments button.comments-toggle.tappable-active{
+.view section.comments button.comments-toggle.tappable-active {
 	color: #fff;
 	background-color: #848484;
 }
-.view section.comments li.more-link-container{
+.view section.comments li.more-link-container {
 	padding: 0;
 }
-.view section.comments li>a.more-link{
+.view section.comments li > a.more-link {
 	display: block;
 	cursor: pointer;
 	-webkit-touch-callout: none;
 	padding: 20px;
 	color: #000;
 }
-.view section.comments li>a.more-link.tappable-active{
+.view section.comments li > a.more-link.tappable-active {
 	background-color: #d9d9d9;
 }
-.view section.comments p.no-comments{
+.view section.comments p.no-comments {
 	text-align: center;
 	padding: 50px 0;
 	margin: 0;
@@ -713,11 +779,11 @@ ol.grouped-tableview-links li>a.tappable-active{
 	font: -apple-system-body;
 }
 .view section.comments .loader,
-.view section.comments .load-error{
+.view section.comments .load-error {
 	padding-top: 50px;
 }
 
-.view section.comments .load-error button{
+.view section.comments .load-error button {
 	cursor: pointer;
 	-webkit-appearance: none;
 	appearance: none;
@@ -729,11 +795,11 @@ ol.grouped-tableview-links li>a.tappable-active{
 	background-color: transparent;
 	outline: 0;
 }
-.view section.comments .load-error button.tappable-active{
-	opacity: .205;
+.view section.comments .load-error button.tappable-active {
+	opacity: 0.205;
 }
 
-.foot-label{
+.foot-label {
 	margin: 0;
 	padding: 10px 15px;
 	color: #6d6d72;
@@ -742,21 +808,21 @@ ol.grouped-tableview-links li>a.tappable-active{
 	font-weight: normal;
 	line-height: 1.2em;
 }
-.grouped-tableview + .foot-label{
+.grouped-tableview + .foot-label {
 	margin-top: -34px;
 }
 
 .cf:before,
 .cf:after {
-	content:"";
-	display:table;
+	content: '';
+	display: table;
 }
 
 .cf:after {
-	clear:both;
+	clear: both;
 }
 
-#y-icon{
+#y-icon {
 	background: transparent url(../../icons/icon.svg) no-repeat;
 	background-size: 60px 60px;
 	width: 60px;
@@ -766,24 +832,24 @@ ol.grouped-tableview-links li>a.tappable-active{
 	border-radius: 14px;
 }
 
-#app-desc{
+#app-desc {
 	margin: 0 0 0 70px;
 	font-size: 15px;
 	font: -apple-system-subheadline;
 	font-weight: normal;
 	line-height: 1.2em;
 }
-#app-desc strong{
+#app-desc strong {
 	font-size: 17px;
 	font: -apple-system-body;
 	line-height: 1.3;
 }
 
-.view:before{
+.view:before {
 	content: '';
-	background-color: rgba(0,0,0,.095);
-	background-image: -webkit-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,.18));
-	background-image: linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,.18));
+	background-color: rgba(0, 0, 0, 0.095);
+	background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.18));
+	background-image: linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.18));
 	background-size: 9px 1px;
 	background-position: right;
 	background-repeat: repeat-y;
@@ -799,239 +865,304 @@ ol.grouped-tableview-links li>a.tappable-active{
 .view,
 .view:before,
 .view:after,
-.view>.scroll,
-.view>header,
-.view>header h1,
-.view>header .header-button button,
-.slide-up{
-	-webkit-animation-timing-function: cubic-bezier(.3,.5,0,1);
+.view > .scroll,
+.view > header,
+.view > header h1,
+.view > header .header-button button,
+.slide-up {
+	-webkit-animation-timing-function: cubic-bezier(0.3, 0.5, 0, 1);
 	-webkit-animation-duration: 500ms;
-	animation-timing-function: cubic-bezier(.3,.5,0,1);
+	animation-timing-function: cubic-bezier(0.3, 0.5, 0, 1);
 	animation-duration: 500ms;
 }
 
-.view{
+.view {
 	-webkit-transition: -webkit-filter 500ms;
 	transition-property: -webkit-filter, filter;
 	transition-duration: 500ms;
 }
 
-.view>.scroll,
-.view>.scroll>section{
-	-webkit-transform: translate3d(0,0,0);
-	transform: translate3d(0,0,0);
+.view > .scroll,
+.view > .scroll > section {
+	-webkit-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
 }
 
 .slide-in-from-right,
 .slide-in-from-left,
 .slide-out-to-right,
 .slide-out-to-left,
-.no-pointer{
+.no-pointer {
 	pointer-events: none;
 }
 
-.slide-in-from-right:before{
+.slide-in-from-right:before {
 	-webkit-animation-name: slidefadeinfromright;
 	animation-name: slidefadeinfromright;
 }
-.slide-in-from-right>.scroll{
+.slide-in-from-right > .scroll {
 	-webkit-animation-name: slideinfromright;
 	animation-name: slideinfromright;
 }
 .slide-in-from-right:after,
-.slide-in-from-right>header{
+.slide-in-from-right > header {
 	-webkit-animation-name: fadein;
 	animation-name: fadein;
 }
-.slide-in-from-right>header h1{
+.slide-in-from-right > header h1 {
 	-webkit-animation-name: slide60infromright;
 	animation-name: slide60infromright;
 }
-.slide-in-from-right>header .header-back-button button{
+.slide-in-from-right > header .header-back-button button {
 	-webkit-animation-name: backinfromcenter;
 	animation-name: backinfromcenter;
 }
 
-.slide-in-from-left>.scroll{
+.slide-in-from-left > .scroll {
 	-webkit-animation-name: slide33infromleft;
 	animation-name: slide33infromleft;
 }
-.slide-in-from-left>header h1{
+.slide-in-from-left > header h1 {
 	-webkit-animation-name: slide60infromleft;
 	animation-name: slide60infromleft;
 }
-.slide-in-from-left>header .header-back-button button{
+.slide-in-from-left > header .header-back-button button {
 	-webkit-animation-name: backinfromleft;
 	animation-name: backinfromleft;
 }
 
-.slide-out-to-right:before{
+.slide-out-to-right:before {
 	-webkit-animation-name: slidefadeouttoright;
 	animation-name: slidefadeouttoright;
 }
-.slide-out-to-right>.scroll{
+.slide-out-to-right > .scroll {
 	-webkit-animation-name: slideouttoright;
 	animation-name: slideouttoright;
 }
 .slide-out-to-right:after,
-.slide-out-to-right>header{
+.slide-out-to-right > header {
 	-webkit-animation-name: fadeout;
 	animation-name: fadeout;
 }
-.slide-out-to-right>header h1{
+.slide-out-to-right > header h1 {
 	-webkit-animation-name: slide60outtoright;
 	animation-name: slide60outtoright;
 }
-.slide-out-to-right>header .header-back-button button{
+.slide-out-to-right > header .header-back-button button {
 	-webkit-animation-name: backouttocenter;
 	animation-name: backouttocenter;
 }
 
-.slide-out-to-left>.scroll{
+.slide-out-to-left > .scroll {
 	-webkit-animation-name: slide33outtoleft;
 	animation-name: slide33outtoleft;
 }
-.slide-out-to-left>header h1{
+.slide-out-to-left > header h1 {
 	-webkit-animation-name: slide60outtoleft;
 	animation-name: slide60outtoleft;
 }
-.slide-out-to-left>header .header-back-button button{
+.slide-out-to-left > header .header-back-button button {
 	-webkit-animation-name: backouttoleft;
 	animation-name: backouttoleft;
 }
 
-.slide-up{
+.slide-up {
 	-webkit-animation-name: slideup;
 	animation-name: slideup;
 }
-.slide-down{
+.slide-down {
 	-webkit-animation-name: slidedown;
 	animation-name: slidedown;
 }
 
 /* Keyframes for .scroll */
 @-webkit-keyframes slideinfromright {
-	from { -webkit-transform: translate3d(100%,0,0); }
-	to { -webkit-transform: translate3d(0,0,0); }
+	from {
+		-webkit-transform: translate3d(100%, 0, 0);
+	}
+	to {
+		-webkit-transform: translate3d(0, 0, 0);
+	}
 }
 @-webkit-keyframes slide33infromleft {
-	from { -webkit-transform: translate3d(-33%,0,0); }
-	to { -webkit-transform: translate3d(0,0,0); }
+	from {
+		-webkit-transform: translate3d(-33%, 0, 0);
+	}
+	to {
+		-webkit-transform: translate3d(0, 0, 0);
+	}
 }
 @-webkit-keyframes slide33outtoleft {
-	from { -webkit-transform: translate3d(0,0,0); }
-	to { -webkit-transform: translate3d(-33%,0,0); }
+	from {
+		-webkit-transform: translate3d(0, 0, 0);
+	}
+	to {
+		-webkit-transform: translate3d(-33%, 0, 0);
+	}
 }
 @-webkit-keyframes slideouttoright {
-	from { -webkit-transform: translate3d(0,0,0); }
-	to { -webkit-transform: translate3d(100%,0,0); }
+	from {
+		-webkit-transform: translate3d(0, 0, 0);
+	}
+	to {
+		-webkit-transform: translate3d(100%, 0, 0);
+	}
 }
 
 /* Keyframes for scroll mask, .view:before */
 @-webkit-keyframes slidefadeinfromright {
 	from {
-		-webkit-transform: translate3d(0,0,0);
+		-webkit-transform: translate3d(0, 0, 0);
 		opacity: 0;
 	}
 	to {
-		-webkit-transform: translate3d(-100%,0,0);
+		-webkit-transform: translate3d(-100%, 0, 0);
 		opacity: 1;
 	}
 }
 @-webkit-keyframes slidefadeouttoright {
 	from {
-		-webkit-transform: translate3d(-100%,0,0);
+		-webkit-transform: translate3d(-100%, 0, 0);
 		opacity: 1;
 	}
 	to {
-		-webkit-transform: translate3d(0,0,0);
+		-webkit-transform: translate3d(0, 0, 0);
 		opacity: 0;
 	}
 }
 
 /* Keyframes for heading text, h1 */
 @-webkit-keyframes slide60infromright {
-	from { -webkit-transform: translate3d(60%,0,0); }
-	to { -webkit-transform: translate3d(0,0,0); }
+	from {
+		-webkit-transform: translate3d(60%, 0, 0);
+	}
+	to {
+		-webkit-transform: translate3d(0, 0, 0);
+	}
 }
 @-webkit-keyframes slide60infromleft {
-	from { -webkit-transform: translate3d(-60%,0,0); }
-	to { -webkit-transform: translate3d(0,0,0); }
+	from {
+		-webkit-transform: translate3d(-60%, 0, 0);
+	}
+	to {
+		-webkit-transform: translate3d(0, 0, 0);
+	}
 }
 @-webkit-keyframes slide60outtoleft {
-	from { -webkit-transform: translate3d(0,0,0); }
-	to { -webkit-transform: translate3d(-60%,0,0); }
+	from {
+		-webkit-transform: translate3d(0, 0, 0);
+	}
+	to {
+		-webkit-transform: translate3d(-60%, 0, 0);
+	}
 }
 @-webkit-keyframes slide60outtoright {
-	from { -webkit-transform: translate3d(0,0,0); }
-	to { -webkit-transform: translate3d(60%,0,0); }
+	from {
+		-webkit-transform: translate3d(0, 0, 0);
+	}
+	to {
+		-webkit-transform: translate3d(60%, 0, 0);
+	}
 }
 
 /* Generic fade keyframes */
 @-webkit-keyframes fadein {
-	from { opacity: 0; }
-	to { opacity: 1; }
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }
 @-webkit-keyframes fadeout {
-	from { opacity: 1; }
-	to { opacity: 0; }
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
 }
 
 /* Keyframes for back button, .header-back-button */
 @-webkit-keyframes backinfromcenter {
-	from { -webkit-transform: translate3d(200%,0,0); }
-	to { -webkit-transform: translate3d(0,0,0); }
+	from {
+		-webkit-transform: translate3d(200%, 0, 0);
+	}
+	to {
+		-webkit-transform: translate3d(0, 0, 0);
+	}
 }
 @-webkit-keyframes backinfromleft {
-	from { -webkit-transform: translate3d(-100%,0,0); }
-	to { -webkit-transform: translate3d(0,0,0); }
+	from {
+		-webkit-transform: translate3d(-100%, 0, 0);
+	}
+	to {
+		-webkit-transform: translate3d(0, 0, 0);
+	}
 }
 @-webkit-keyframes backouttocenter {
-	from { -webkit-transform: translate3d(0,0,0); }
-	to { -webkit-transform: translate3d(200%,0,0); }
+	from {
+		-webkit-transform: translate3d(0, 0, 0);
+	}
+	to {
+		-webkit-transform: translate3d(200%, 0, 0);
+	}
 }
 @-webkit-keyframes backouttoleft {
-	from { -webkit-transform: translate3d(0,0,0); }
-	to { -webkit-transform: translate3d(-100%,0,0); }
+	from {
+		-webkit-transform: translate3d(0, 0, 0);
+	}
+	to {
+		-webkit-transform: translate3d(-100%, 0, 0);
+	}
 }
 
 /* Generic slide up/down keyframe */
 @-webkit-keyframes slideup {
-	from { -webkit-transform: translate3d(0,100%,0); }
-	to { -webkit-transform: translate3d(0,0,0); }
+	from {
+		-webkit-transform: translate3d(0, 100%, 0);
+	}
+	to {
+		-webkit-transform: translate3d(0, 0, 0);
+	}
 }
 @-webkit-keyframes slidedown {
-	from { -webkit-transform: translate3d(0,0,0); }
-	to { -webkit-transform: translate3d(0,100%,0); }
+	from {
+		-webkit-transform: translate3d(0, 0, 0);
+	}
+	to {
+		-webkit-transform: translate3d(0, 100%, 0);
+	}
 }
 
-@media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-resolution: 144dpi) {
-	.view:after{
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+	only screen and (min-resolution: 144dpi) {
+	.view:after {
 		width: 200%;
-		-webkit-transform: scale(.5);
-		transform: scale(.5);
+		-webkit-transform: scale(0.5);
+		transform: scale(0.5);
 		-webkit-transform-origin: 0 0;
 		transform-origin: 0 0;
 	}
-	.tableview-links li:not(:first-child)>a:first-child:before,
+	.tableview-links li:not(:first-child) > a:first-child:before,
 	.grouped-tableview,
 	ul.grouped-tableview-links:before,
 	ol.grouped-tableview-links:before,
 	.view section.comments,
-	.view section.comments ul li{
+	.view section.comments ul li {
 		background-size: 1px 1px;
 	}
 	.tableview li,
 	ul.grouped-tableview li,
-	ol.grouped-tableview li{
+	ol.grouped-tableview li {
 		background-size: 100% 1px;
 	}
-	.view section.comments button.comments-toggle{
+	.view section.comments button.comments-toggle {
 		border: 0;
 		position: relative;
 		/*box-shadow: inset 0 0 1px #848484, inset 0 0 1px #848484, inset 0 0 1px #848484, inset 0 0 1px #848484, inset 0 0 1px #848484;*/
 	}
-	.view section.comments button.comments-toggle:after{
+	.view section.comments button.comments-toggle:after {
 		content: '';
 		position: absolute;
 		top: 0;
@@ -1041,71 +1172,71 @@ ol.grouped-tableview-links li>a.tappable-active{
 		height: 200%; /* double */
 		border: 1px solid #848484;
 		border-radius: 6px; /* double */
-		-webkit-transform: scale(.5);
-		transform: scale(.5);
+		-webkit-transform: scale(0.5);
+		transform: scale(0.5);
 		-webkit-transform-origin: 0 0;
 		transform-origin: 0 0;
 	}
 }
 
-@media only screen and (min-width: 737px){
-	.view:after{
+@media only screen and (min-width: 737px) {
+	.view:after {
 		-webkit-transform-origin: bottom left;
 		transform-origin: bottom left;
 	}
-	.tableview-links li>a.selected:visited{
+	.tableview-links li > a.selected:visited {
 		color: #000;
 	}
-	#view-home>header,
-	#view-comments>header{
+	#view-home > header,
+	#view-comments > header {
 		position: absolute;
 		bottom: 0;
 		width: 100%;
 		box-sizing: border-box;
 	}
 	#view-home:after,
-	#view-comments:after{
+	#view-comments:after {
 		top: auto;
 		bottom: 44px;
 	}
-	#view-home{
+	#view-home {
 		width: 301px;
 	}
-	#view-home>header{
+	#view-home > header {
 		border-right: 1px solid #bbbbbe;
 	}
-	#view-home>header h1{
+	#view-home > header h1 {
 		display: none;
 	}
-	#view-home>.scroll{
+	#view-home > .scroll {
 		border-right: 1px solid #8e8e93;
 	}
-	#view-comments{
+	#view-comments {
 		left: 301px;
 	}
-	#view-comments .header-back-button{
+	#view-comments .header-back-button {
 		padding: 0 15px;
 		width: 13px;
 		background: transparent url(../images/ios7/close-button.png) center no-repeat;
 		background-size: 13px 13px;
 		height: 44px;
 	}
-	#view-comments .header-back-button button{
+	#view-comments .header-back-button button {
 		display: none;
 	}
-	#view-comments>header h1{
+	#view-comments > header h1 {
 		text-align: left;
 		margin-left: 44px !important;
 		margin-right: 10px !important;
 		font-weight: normal;
 	}
 
-	.view-blank-state{
+	.view-blank-state {
 		display: -webkit-flex;
 		display: flex;
 		height: 100%;
 	}
-	.view-blank-state-text{
+	.view-blank-state-text {
 		margin: auto;
 		-webkit-user-select: none;
 		text-align: center;
@@ -1115,23 +1246,23 @@ ol.grouped-tableview-links li>a.tappable-active{
 		font: -apple-system-body;
 	}
 
-	#overlay{
+	#overlay {
 		position: absolute;
 		top: 0;
 		z-index: 100;
 		width: 100%;
 		height: 100%;
-		background-color: rgba(0, 2, 8, .5);
+		background-color: rgba(0, 2, 8, 0.5);
 		opacity: 1;
 		-webkit-transition: opacity 350ms ease-in-out;
 		transition: opacity 350ms ease-in-out;
 	}
-	#overlay.hide{
+	#overlay.hide {
 		opacity: 0;
 		pointer-events: none;
 		visibility: hidden;
 	}
-	#view-about{
+	#view-about {
 		width: 540px;
 		height: 400px;
 		left: 50%;
@@ -1143,152 +1274,160 @@ ol.grouped-tableview-links li>a.tappable-active{
 		transform: translateY(0);
 		box-sizing: border-box;
 	}
-	#view-about.animated{
+	#view-about.animated {
 		-webkit-transition: -webkit-transform 350ms;
 		transition: -webkit-transform 350ms;
 	}
-	#view-about.hidden{
+	#view-about.hidden {
 		-webkit-transform: translateY(220%);
 		transform: translateY(220%);
 	}
-	#view-about>.scroll>section{
+	#view-about > .scroll > section {
 		padding: 0 28px;
 	}
 	#view-about .grouped-tableview,
-	#view-about .grouped-tableview li:last-child{
+	#view-about .grouped-tableview li:last-child {
 		background-image: none;
 	}
-	#view-about .grouped-tableview{
+	#view-about .grouped-tableview {
 		border-radius: 5px;
 		overflow: hidden;
 	}
-	#view-about .grouped-tableview:before{
+	#view-about .grouped-tableview:before {
 		content: none;
 	}
-	#view-about .foot-label{
+	#view-about .foot-label {
 		padding-bottom: 34px;
 	}
 
-	#app-desc{
+	#app-desc {
 		margin-left: 86px;
 	}
 }
 
-@media (prefers-color-scheme: dark){
-	body{
+@media (prefers-color-scheme: dark) {
+	body {
 		color: #fff;
 		background-color: #1c1c1e;
 	}
-	#apploader{
+	#apploader {
 		background-color: #1c1c1e;
 	}
 	a,
-	.link-text{
+	.link-text {
 		color: #1684ff;
 	}
-	.view>header,
-	.view.shaded>header{
+	.view > header,
+	.view.shaded > header {
 		background-color: #2c2c2e;
 	}
-	.view>header .header-button{
+	.view > header .header-button {
 		filter: brightness(1.1);
 		/* color: #1684ff; */
 	}
-	.view:after{
-		background-color: rgba(255,255,255,.15);
+	.view:after {
+		background-color: rgba(255, 255, 255, 0.15);
 	}
-	.view.shaded>.scroll,
-	.tableview{
+	.view.shaded > .scroll,
+	.tableview {
 		background-color: #1c1c1e;
 	}
-	.tableview li{
+	.tableview li {
 		background-image: -webkit-linear-gradient(bottom, #3a3a3c, #3a3a3c 50%, transparent 50%);
 		background-image: linear-gradient(bottom, #3a3a3c, #3a3a3c 50%, transparent 50%);
 	}
-	.tableview-links li>a{
+	.tableview-links li > a {
 		color: #fff;
 	}
-	.tableview-links li>a .metadata .link-text,
-	.view .post-content header a .link-text{
+	.tableview-links li > a .metadata .link-text,
+	.view .post-content header a .link-text {
 		color: #2988cf;
 	}
-	.tableview-links li:not(:first-child)>a:first-child:before{
+	.tableview-links li:not(:first-child) > a:first-child:before {
 		background-image: -webkit-linear-gradient(bottom, #48484a, #48484a 50%, transparent 50%);
 		background-image: linear-gradient(bottom, #48484a, #48484a 50%, transparent 50%);
 	}
-	.tableview-links li>a.tappable-active,
-	.tableview-links li>a.selected{
+	.tableview-links li > a.tappable-active,
+	.tableview-links li > a.selected {
 		background-color: #48484a;
 	}
-	.grouped-tableview{
+	.grouped-tableview {
 		background-color: #2c2c2e;
-		background-image: -webkit-linear-gradient(top, #3a3a3c, #3a3a3c 50%, transparent 50%), -webkit-linear-gradient(bottom, #3a3a3c, #3a3a3c 50%, transparent 50%);
-		background-image: linear-gradient(top, #3a3a3c, #3a3a3c 50%, transparent 50%), linear-gradient(bottom, #3a3a3c, #3a3a3c 50%, transparent 50%);
+		background-image:
+			-webkit-linear-gradient(top, #3a3a3c, #3a3a3c 50%, transparent 50%),
+			-webkit-linear-gradient(bottom, #3a3a3c, #3a3a3c 50%, transparent 50%);
+		background-image:
+			linear-gradient(top, #3a3a3c, #3a3a3c 50%, transparent 50%),
+			linear-gradient(bottom, #3a3a3c, #3a3a3c 50%, transparent 50%);
 	}
 	ul.grouped-tableview li,
 	ol.grouped-tableview li,
 	ul.grouped-tableview-links:before,
-	ol.grouped-tableview-links:before{
+	ol.grouped-tableview-links:before {
 		background-image: -webkit-linear-gradient(bottom, #3a3a3c, #3a3a3c 50%, transparent 50%);
 		background-image: linear-gradient(bottom, #3a3a3c, #3a3a3c 50%, transparent 50%);
 	}
 	ul.grouped-tableview-links li,
-	ol.grouped-tableview-links li{
+	ol.grouped-tableview-links li {
 		background-color: #2c2c2e;
 	}
-	ul.grouped-tableview-links li>a,
-	ol.grouped-tableview-links li>a{
+	ul.grouped-tableview-links li > a,
+	ol.grouped-tableview-links li > a {
 		color: #fff;
 	}
-	ul.grouped-tableview-links li>a.tappable-active,
-	ol.grouped-tableview-links li>a.tappable-active{
+	ul.grouped-tableview-links li > a.tappable-active,
+	ol.grouped-tableview-links li > a.tappable-active {
 		background-color: #48484a;
 	}
-	.view .post-content header a{
+	.view .post-content header a {
 		color: #fff;
 	}
 	.view .post-content pre,
-	.view section.comments pre{
+	.view section.comments pre {
 		background-color: #48484a;
 	}
-	.view section.comments{
+	.view section.comments {
 		background-color: #2c2c2e;
-		background-image: -webkit-linear-gradient(top, #48484a, #48484a 50%, transparent 50%), -webkit-linear-gradient(bottom, #48484a, #48484a 50%, transparent 50%);
-		background-image: linear-gradient(top, #48484a, #48484a 50%, transparent 50%), linear-gradient(bottom, #48484a, #48484a 50%, transparent 50%);
+		background-image:
+			-webkit-linear-gradient(top, #48484a, #48484a 50%, transparent 50%),
+			-webkit-linear-gradient(bottom, #48484a, #48484a 50%, transparent 50%);
+		background-image:
+			linear-gradient(top, #48484a, #48484a 50%, transparent 50%),
+			linear-gradient(bottom, #48484a, #48484a 50%, transparent 50%);
 	}
-	.view section.comments ul li{
+	.view section.comments ul li {
 		background-image: -webkit-linear-gradient(top, #48484a, #48484a 50%, transparent 50%);
 		background-image: linear-gradient(top, #48484a, #48484a 50%, transparent 50%);
 	}
-	.view section.comments ul ul li{
+	.view section.comments ul ul li {
 		color: #f2f2f7;
 	}
-	.view section.comments p.metadata .user{
+	.view section.comments p.metadata .user {
 		color: #e84f66;
 	}
-	.view section.comments p.metadata .user.op:after{
+	.view section.comments p.metadata .user.op:after {
 		background-color: #e84f66;
 	}
-	.view section.comments .load-error button{
+	.view section.comments .load-error button {
 		filter: brightness(1.1);
 		/* color: #1684ff; */
 	}
-	@media only screen and (min-width: 737px){
-		.tableview-links li>a.selected:visited{
+	@media only screen and (min-width: 737px) {
+		.tableview-links li > a.selected:visited {
 			color: #fff;
 		}
-		#view-home>header,
-		#view-home>.scroll{
+		#view-home > header,
+		#view-home > .scroll {
 			border-right-color: #48484a;
 		}
 	}
 	.icon-refresh,
 	#view-comments .header-button-left button,
 	#view-about .header-button-left button,
-	.tableview-links li>a.detail-disclosure-button{
+	.tableview-links li > a.detail-disclosure-button {
 		filter: brightness(1.1);
 	}
-	.loader{
+	.loader {
 		filter: invert(1);
 	}
 }
