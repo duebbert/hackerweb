@@ -79,6 +79,24 @@ const domainify = function (url) {
 	return domained
 }
 
+// Remove cached comments for stories no longer on the front page.
+// Only runs when online to preserve offline reading data.
+const cleanupStaleItems = function () {
+	if (!navigator.onLine) return
+	const news = store('hacker-news') || []
+	const news2 = store('hacker-news2') || []
+	const activeIds = {}
+	for (const item of news) activeIds[item.id] = true
+	for (const item of news2) activeIds[item.id] = true
+	const allStored = store() || {}
+	for (const key in allStored) {
+		if (/^hacker-item-\d+$/.test(key)) {
+			const id = Number(key.replace('hacker-item-', ''))
+			if (!activeIds[id]) store(key, null)
+		}
+	}
+}
+
 // Search both news caches for a post by ID.
 // Returns { post, cacheKey } or null.
 const findCachedPost = function (id) {
@@ -121,6 +139,9 @@ hw.news = {
 		}
 		item.i_point = item.points === 1 ? 'point' : 'points'
 		item.i_comment = item.comments_count === 1 ? 'comment' : 'comments'
+		const isCached = !!store('hacker-item-' + item.id)
+		const cachingEnabled = localStorage['hackerweb:options:offline-cache'] !== 'off'
+		item.cached = isCached ? 'cached' : cachingEnabled ? 'pending' : false
 		return tmpl('post', item)
 	},
 	markupStories: function (data, i) {
@@ -223,22 +244,35 @@ hw.news = {
 					loadNews(data)
 					// Preload news2 to prevent discrepancies between /news and /news2 results
 					hnapi.news2(function (data) {
-						if (!data || data.error) return
+						if (!data || data.error) {
+							cleanupStaleItems()
+							return
+						}
 						store('hacker-news2', data)
 						$('hwlist').insertAdjacentHTML(
 							'beforeend',
 							'<li><a class="more-link">More&hellip;<span class="loader"></span></a></li>',
 						)
+						cleanupStaleItems()
 					})
 				},
 				function (_e) {
 					loadingNews = false
-					showError()
+					const staleNews = store('hacker-news')
+					if (staleNews) {
+						loadNews(staleNews)
+					} else {
+						showError()
+					}
 				},
 			)
 		}
 	},
 	reload: function () {
+		store('hacker-news', null)
+		store('hacker-news2', null)
+		store('hacker-news-cached', null)
+		hw.preloader.stop()
 		hw.news.render({
 			delay: 300, // Cheat a little to make user think that it's doing something
 		})
@@ -262,6 +296,10 @@ hw.news = {
 			})
 			const html = hw.news.markupStories(data, 31)
 			$('hwlist').insertAdjacentHTML('beforeend', html)
+			// Preload comments for newly rendered stories
+			if (localStorage['hackerweb:options:offline-cache'] !== 'off') {
+				hw.preloader.start(data)
+			}
 		}, 400)
 	},
 }
@@ -274,7 +312,7 @@ hw.comments = {
 	currentID: null,
 	render: function (id) {
 		if (!id) return
-		let post = store.sessionStorage('hacker-item-' + id)
+		let post = store('hacker-item-' + id)
 		if (hw.comments.currentID === id && post) return
 		hw.comments.currentID = id
 
@@ -390,8 +428,8 @@ hw.comments = {
 						showError()
 						return
 					}
-					store.sessionStorage('hacker-item-' + id, data, {
-						expires: 1000 * 60 * 5, // 5 minutes
+					store('hacker-item-' + id, data, {
+						expires: 1000 * 60 * 60 * 24, // 24 hours
 					})
 					hw.news.updateStory({
 						id: id,
@@ -453,6 +491,105 @@ hw.comments = {
 		router.reload()
 	},
 }
+
+hw.preloader = {
+	queue: [],
+	retries: {},
+	running: false,
+	concurrency: 5,
+	maxRetries: 2,
+	markCached: function (id) {
+		const storyEl = $('story-' + id)
+		if (!storyEl) return
+		const existing = storyEl.querySelector('.cached-indicator')
+		if (existing) {
+			existing.classList.remove('pending')
+			existing.title = 'Available offline'
+		} else {
+			const meta = storyEl.querySelector('.metadata .inline-block:last-child')
+			if (meta) {
+				meta.insertAdjacentHTML(
+					'beforeend',
+					'<span class="cached-indicator" title="Available offline"></span>',
+				)
+			}
+		}
+	},
+	start: function (news) {
+		const newIds = news
+			.filter(function (item) {
+				return !store('hacker-item-' + item.id)
+			})
+			.map(function (item) {
+				return item.id
+			})
+		if (newIds.length === 0) return
+		if (hw.preloader.running) {
+			// Append to existing queue, skip duplicates
+			const queued = {}
+			for (const id of hw.preloader.queue) queued[id] = true
+			for (const id of newIds) {
+				if (!queued[id]) hw.preloader.queue.push(id)
+			}
+			return
+		}
+		hw.preloader.queue = newIds
+		hw.preloader.retries = {}
+		hw.preloader.running = true
+		hw.preloader.fetchBatch()
+	},
+	fetchBatch: function () {
+		if (!hw.preloader.queue.length) {
+			hw.preloader.running = false
+			return
+		}
+		const batch = hw.preloader.queue.splice(0, hw.preloader.concurrency)
+		let pending = batch.length
+		for (const id of batch) {
+			if (store('hacker-item-' + id)) {
+				hw.preloader.markCached(id)
+				if (--pending === 0) hw.preloader.fetchBatch()
+				continue
+			}
+			hnapi.item(
+				id,
+				function (data) {
+					if (data && !data.error) {
+						try {
+							store('hacker-item-' + id, data, {
+								expires: 1000 * 60 * 60 * 24,
+							})
+							hw.preloader.markCached(id)
+						} catch (_e) {
+							// Quota exceeded — stop preloading
+							hw.preloader.queue = []
+						}
+					}
+					if (--pending === 0) hw.preloader.fetchBatch()
+				},
+				function () {
+					// Retry failed items
+					const retryCount = hw.preloader.retries[id] || 0
+					if (retryCount < hw.preloader.maxRetries) {
+						hw.preloader.retries[id] = retryCount + 1
+						hw.preloader.queue.push(id)
+					}
+					if (--pending === 0) hw.preloader.fetchBatch()
+				},
+			)
+		}
+	},
+	stop: function () {
+		hw.preloader.queue = []
+		hw.preloader.running = false
+	},
+}
+
+hw.sub('onRenderNews', function () {
+	if (localStorage['hackerweb:options:offline-cache'] === 'off') return
+	const news = store('hacker-news')
+	if (news) hw.preloader.start(news)
+})
 
 hw.init = function () {
 	hw.news.render()
@@ -557,6 +694,28 @@ hw.init = function () {
 				const list = d.getElementById('hwlist')
 				const moreLi = list?.querySelector('.more-link')
 				if (moreLi?.parentNode) hw.news.more(moreLi)
+			}
+		}
+	}
+
+	// "Cache comments for offline" toggle on the About page.
+	const $offlineCache = $('hw-offline-cache')
+	if ($offlineCache) {
+		const cacheKey = 'hackerweb:options:offline-cache'
+		const current = localStorage[cacheKey] === 'off' ? 'off' : 'on'
+		const cacheInput = $offlineCache.querySelector(
+			'[name=hw-offline-cache][value="' + current + '"]',
+		)
+		if (cacheInput) cacheInput.checked = true
+		$offlineCache.onclick = function () {
+			const checked = $offlineCache.querySelector('[name=hw-offline-cache]:checked')
+			if (!checked) return
+			localStorage[cacheKey] = checked.value
+			if (checked.value === 'on') {
+				const news = store('hacker-news')
+				if (news) hw.preloader.start(news)
+			} else {
+				hw.preloader.stop()
 			}
 		}
 	}

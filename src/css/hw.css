@@ -639,8 +639,77 @@ ol.grouped-tableview-links li > a:hover {
 	}
 }
 
+/* Clear cache button */
+.clear-cache-button {
+	font-size: 13px;
+	padding: 4px 12px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	background-color: #fff;
+	color: #333;
+	cursor: pointer;
+}
+.clear-cache-button:active {
+	background-color: #f0f0ea;
+}
+
+/* Cached/offline indicator */
+.cached-indicator {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	margin-left: 4px;
+	vertical-align: middle;
+	border-radius: 50%;
+	background-color: #4cd964;
+	opacity: 0.7;
+}
+.cached-indicator.pending {
+	background-color: transparent;
+	border: 1px solid #999;
+	opacity: 0.5;
+}
+
+body.offline .tableview-links li:not(:has(.cached-indicator)) {
+	opacity: 0.35;
+	pointer-events: none;
+}
+
+/* Offline banner */
+.offline-banner {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 5;
+	background-color: #ff9500;
+	color: #fff;
+	text-align: center;
+	font-size: 13px;
+	font-weight: 500;
+	padding: 4px 10px;
+	line-height: 1.4;
+}
+.offline-banner:not([hidden]) ~ .view > header {
+	top: 26px;
+}
+.offline-banner:not([hidden]) ~ .view > .scroll {
+	margin-top: 70px;
+}
+
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
+	.offline-banner {
+		background-color: #cc7a00;
+	}
+	.clear-cache-button {
+		background-color: #333;
+		border-color: #555;
+		color: #eee;
+	}
+	.clear-cache-button:active {
+		background-color: #444;
+	}
 	body {
 		color: rgba(255, 255, 255, 0.87);
 		background-color: #121212;

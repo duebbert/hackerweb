@@ -17,6 +17,9 @@
 		<link rel="stylesheet" href="/src/css/hw.css" />
 	</head>
 	<body>
+		<div id="offline-banner" class="offline-banner" hidden>
+			You are offline. Showing cached content.
+		</div>
 		<div class="view hidden" id="view-home">
 			<header>
 				<a href="#/about" class="header-button header-button-left">
@@ -80,6 +83,23 @@
 							>
 						</div>
 					</div>
+					<div class="grouped-tableview cf">
+						<div class="inline-block">Cache comments for offline</div>
+						<div class="inline-block" id="hw-offline-cache">
+							<label
+								><input name="hw-offline-cache" type="radio" value="on" /> On</label
+							>
+							<label
+								><input name="hw-offline-cache" type="radio" value="off" /> Off</label
+							>
+						</div>
+					</div>
+					<div class="grouped-tableview cf">
+						<div class="inline-block">Cached stories</div>
+						<div class="inline-block" id="hw-clear-cache">
+							<button type="button" class="clear-cache-button">Clear cache</button>
+						</div>
+					</div>
 					<ul class="grouped-tableview grouped-tableview-links">
 						<li>
 							<a href="https://news.ycombinator.com/" target="_blank" class="disclosure"
@@ -104,13 +124,12 @@
 			</div>
 		</div>
 		<script type="module" src="/src/js/main.js"></script>
+		<!-- biome-ignore format: inline script -->
 		<script>
 			if ('serviceWorker' in navigator) {
 				navigator.serviceWorker
 					.register('/service-worker.js')
-					.catch(function () {
-						/* ignored */
-					})
+					.catch(function () { /* ignored */ })
 			}
 			if (/preview/i.test(location.search)) {
 				document.querySelector('.scroll').style.height = 'auto'

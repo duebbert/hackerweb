@@ -64,7 +64,10 @@ router.config({
 			$('view-home').classList.remove('hidden')
 		}
 	},
-	on: function () {
+	on: function (_path, name) {
+		if (name === 'home' && !store('hacker-news-cached')) {
+			hw.news.reload()
+		}
 		const hash = location.hash.slice(1)
 		const key = 'hacker-scrolltop-' + hash
 		let top = store.sessionStorage(key)
@@ -122,6 +125,33 @@ on('#view-comments .load-error button', 'click', function () {
 	hw.comments.reload()
 })
 
+// Clear cache
+on('#hw-clear-cache button', 'click', function (_e, target) {
+	const allStored = store() || {}
+	for (const key in allStored) {
+		if (/^hacker-/.test(key)) store(key, null)
+	}
+	if ('caches' in window) {
+		caches.keys().then(function (keys) {
+			for (const k of keys) {
+				if (k.startsWith('hackerweb-')) caches.delete(k)
+			}
+		})
+	}
+	// Reset all cached indicators to pending
+	const indicators = d.querySelectorAll('.cached-indicator')
+	for (const el of indicators) {
+		el.classList.add('pending')
+		el.title = 'Caching\u2026'
+	}
+	// Invalidate news cache so it re-renders (and re-preloads) on next view
+	store('hacker-news-cached', null)
+	target.textContent = 'Cleared!'
+	setTimeout(function () {
+		target.textContent = 'Clear cache'
+	}, 2000)
+})
+
 // Auto-reload when returning to page if cache expired
 window.addEventListener(
 	'pageshow',
@@ -134,6 +164,17 @@ window.addEventListener(
 	},
 	false,
 )
+
+// Offline detection
+const offlineBanner = $('offline-banner')
+function updateOnlineStatus() {
+	const online = navigator.onLine
+	offlineBanner.hidden = online
+	d.body.classList.toggle('offline', !online)
+}
+window.addEventListener('online', updateOnlineStatus)
+window.addEventListener('offline', updateOnlineStatus)
+updateOnlineStatus()
 
 hw.news.options.disclosure = true
 hw.init()

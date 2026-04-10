@@ -10,6 +10,15 @@ export default defineConfig({
     jsxFactory: 'h',
     jsxFragment: 'Fragment',
   },
+  optimizeDeps: {
+    rolldownOptions: {
+      jsx: {
+        mode: 'classic',
+        factory: 'h',
+        fragment: 'Fragment',
+      },
+    },
+  },
   server: {
     open: true,
   },

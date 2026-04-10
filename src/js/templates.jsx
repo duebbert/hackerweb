@@ -187,6 +187,16 @@ function renderPost(item) {
 										{item.comments_count} {item.i_comment}
 									</Fragment>
 								)}
+								{item.cached && (
+									<span
+										class={
+											'cached-indicator' + (item.cached === 'pending' ? ' pending' : '')
+										}
+										title={
+											item.cached === 'cached' ? 'Available offline' : 'Caching\u2026'
+										}
+									></span>
+								)}
 							</span>
 						</div>
 					) : (
@@ -197,7 +207,19 @@ function renderPost(item) {
 									<br />
 								</Fragment>
 							)}
-							<span class="inline-block">{item.time_ago}</span>
+							<span class="inline-block">
+								{item.time_ago}
+								{item.cached && (
+									<span
+										class={
+											'cached-indicator' + (item.cached === 'pending' ? ' pending' : '')
+										}
+										title={
+											item.cached === 'cached' ? 'Available offline' : 'Caching\u2026'
+										}
+									></span>
+								)}
+							</span>
 						</div>
 					)}
 				</div>
