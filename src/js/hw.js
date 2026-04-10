@@ -366,7 +366,7 @@ hw.comments = {
 		};
 
 		if (post) {
-			$commentsSection.scrollTop = 0;
+			window.scrollTo(0, 0);
 			loadPost(post, id);
 		} else {
 			var cached = findCachedPost(id);
@@ -414,7 +414,7 @@ hw.comments = {
 		var ul = target.nextElementSibling;
 		if (ul) {
 			var ulStyle = ul.style;
-			var top = $commentsSection.scrollTop;
+			var top = window.pageYOffset || document.documentElement.scrollTop || 0;
 			var collapsed = ulStyle.display != 'none';
 			ulStyle.display = collapsed ? 'none' : '';
 			if (collapsed) {
@@ -422,7 +422,7 @@ hw.comments = {
 			} else {
 				target.classList.remove('collapsed');
 			}
-			$commentsSection.scrollTop = top;
+			window.scrollTo(0, top);
 		}
 	},
 	collapseParent: function (target) {
@@ -436,14 +436,16 @@ hw.comments = {
 		var toggleBtn = parentUl.previousElementSibling;
 		if (toggleBtn && toggleBtn.classList && toggleBtn.classList.contains('comments-toggle')) {
 			toggleBtn.classList.add('collapsed');
-			if (toggleBtn.scrollIntoView) {
-				toggleBtn.scrollIntoView({ block: 'start' });
-			}
 		} else {
-			var meta = grandparentLi.querySelector('p.metadata');
-			if (meta && meta.scrollIntoView) {
-				meta.scrollIntoView({ block: 'start' });
-			}
+			var commentsCount = parentUl.querySelectorAll('.metadata').length;
+			var replyWord = commentsCount == 1 ? 'reply' : 'replies';
+			parentUl.insertAdjacentHTML(
+				'beforebegin',
+				'<button class="comments-toggle collapsed">' + commentsCount + ' ' + replyWord + '</button>',
+			);
+		}
+		if (grandparentLi.scrollIntoView) {
+			grandparentLi.scrollIntoView({ block: 'start' });
 		}
 	},
 	reload: function () {
