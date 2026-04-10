@@ -1,7 +1,7 @@
 body {
 	font-family:
-		-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
-		'Helvetica Neue', sans-serif;
+		-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+		"Cantarell", "Helvetica Neue", sans-serif;
 	font-size: 16px;
 	margin: 0;
 	padding: 0;
@@ -27,7 +27,7 @@ pre {
 }
 pre,
 code {
-	font-family: Menlo, Monaco, Inconsolata, Consolas, 'Lucida Console', monospace;
+	font-family: Menlo, Monaco, Inconsolata, Consolas, "Lucida Console", monospace;
 	font-size: 12px;
 }
 
@@ -35,7 +35,7 @@ code {
 	display: inline-block;
 	width: 14px;
 	height: 18px;
-	background: transparent url(../images/web/refresh-icon.svg) no-repeat;
+	background: transparent url(../images/refresh-icon.svg) no-repeat;
 	background-size: 14px 18px;
 	vertical-align: middle;
 	overflow: hidden;
@@ -128,7 +128,7 @@ code {
 	overflow: hidden;
 	text-indent: -999px;
 	min-width: 32px;
-	background-image: url(../images/web/home-icon.svg);
+	background-image: url(../images/home-icon.svg);
 	background-size: 19.5px 17px;
 	background-repeat: no-repeat;
 	background-position: center;
@@ -264,7 +264,7 @@ code {
 	display: block;
 	width: 17px;
 	height: 17px;
-	background: transparent url(../images/web/comments-icon.svg) no-repeat;
+	background: transparent url(../images/comments-icon.svg) no-repeat;
 	background-size: 17px 17px;
 }
 .tableview-links li > a.detail-disclosure-button .comments-count {
@@ -392,7 +392,7 @@ ol.grouped-tableview-links li > a:hover {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	padding-left: 16px;
-	background: transparent url(../images/web/external-arrow.svg) no-repeat 0 50%;
+	background: transparent url(../images/external-arrow.svg) no-repeat 0 50%;
 	background-size: 12px 10px;
 }
 .view .post-content header .metadata a.external-link:hover {
@@ -487,7 +487,7 @@ ol.grouped-tableview-links li > a:hover {
 }
 .view section.comments p.metadata .collapse-parent::before,
 .view section.comments p.metadata .collapse-parent::after {
-	content: '';
+	content: "";
 	position: absolute;
 	left: 1px;
 	width: 7px;
@@ -529,7 +529,7 @@ ol.grouped-tableview-links li > a:hover {
 	float: left;
 }
 .view section.comments p.metadata .user.op:after {
-	content: 'OP';
+	content: "OP";
 	display: inline-block;
 	font-size: 70%;
 	color: #fff;
@@ -591,7 +591,7 @@ ol.grouped-tableview-links li > a:hover {
 
 .cf:before,
 .cf:after {
-	content: '';
+	content: "";
 	display: table;
 }
 .cf:after {

@@ -5,6 +5,11 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: true,
   },
+  esbuild: {
+    jsx: 'transform',
+    jsxFactory: 'h',
+    jsxFragment: 'Fragment',
+  },
   server: {
     open: true,
   },

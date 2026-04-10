@@ -1,104 +1,102 @@
-import store from './libs/store.js';
-import hnapi from './libs/hnapi.js';
-import router from './libs/router.js';
-import TEMPLATES from './templates.js';
+import hnapi from './libs/hnapi.js'
+import router from './libs/router.js'
+import store from './libs/store.js'
+import TEMPLATES from './templates.jsx'
 
-var d = document;
+const d = document
 
-var $ = function (id) {
-	return d.getElementById(id);
-};
+const $ = function (id) {
+	return d.getElementById(id)
+}
 
-var pubsubCache = {},
+const pubsubCache = {},
 	clone = function (obj) {
-		var target = {};
-		for (var i in obj) {
-			if (obj.hasOwnProperty(i)) target[i] = obj[i];
-		}
-		return target;
-	};
+		return Object.assign({}, obj)
+	}
 
-var hw = {
+const hw = {
 	// PubSub
 	pub: function (topic, data) {
-		var t = pubsubCache[topic];
-		if (!t) return;
-		for (var i = 0, l = t.length; i < l; i++) {
-			t[i].call(this, data);
+		const t = pubsubCache[topic]
+		if (!t) return
+		for (const fn of t) {
+			fn.call(this, data)
 		}
 	},
 	sub: function (topic, fn) {
-		if (!pubsubCache[topic]) pubsubCache[topic] = [];
-		pubsubCache[topic].push(fn);
+		if (!pubsubCache[topic]) pubsubCache[topic] = []
+		pubsubCache[topic].push(fn)
 	},
 	currentView: null,
 	hideAllViews: function () {
-		var views = d.querySelectorAll('.view');
-		for (var i = 0, l = views.length; i < l; i++) {
-			views[i].classList.add('hidden');
+		for (const view of d.querySelectorAll('.view')) {
+			view.classList.add('hidden')
 		}
 	},
 	tmpl: function (template, data) {
-		var t = TEMPLATES[template];
-		if (!t) return;
-		if (!data) return t;
-		return t(data);
+		const t = TEMPLATES[template]
+		if (!t) return
+		if (!data) return t
+		return t(data)
 	},
 	setTitle: function (str) {
-		var title = 'HackerWeb';
+		let title = 'HackerWeb'
 		if (str) {
-			str = str.replace(/^\s+|\s+$/g, ''); // trim
-			if (str.toLowerCase() != title.toLowerCase()) {
-				title = str + ' \u2013 ' + title;
+			str = str.trim()
+			if (str.toLowerCase() !== title.toLowerCase()) {
+				title = str + ' \u2013 ' + title
 			}
 		}
-		d.title = title;
+		d.title = title
 	},
-};
-
-var tmpl = hw.tmpl;
-
-// Fix browsers freak out of store.sessionStorage not a function
-if (!store.sessionStorage || typeof store.sessionStorage != 'function') {
-	store.sessionStorage = store.memory; // Fallback to in-memory storage
 }
 
-var linkElement = d.createElement('a');
-var domainsCache = {};
-var domainify = function (url) {
-	var domained = domainsCache[url];
-	if (domained) return domained;
-	linkElement.href = url;
-	var domain = linkElement.hostname.replace(/^www\./, '');
-	var pathname = linkElement.pathname.replace(/^\//, '').split('/')[0];
-	var pathnameLen = pathname.length;
-	var firstPath =
-		domain.length <= 25 && pathnameLen > 3 && pathnameLen <= 15 && /^[^0-9][^.]+$/.test(pathname)
+const tmpl = hw.tmpl
+
+// Fix browsers freak out of store.sessionStorage not a function
+if (!store.sessionStorage || typeof store.sessionStorage !== 'function') {
+	store.sessionStorage = store.memory // Fallback to in-memory storage
+}
+
+const linkElement = d.createElement('a')
+const domainsCache = {}
+const domainify = function (url) {
+	let domained = domainsCache[url]
+	if (domained) return domained
+	linkElement.href = url
+	const domain = linkElement.hostname.replace(/^www\./, '')
+	const pathname = linkElement.pathname.replace(/^\//, '').split('/')[0]
+	const pathnameLen = pathname.length
+	const firstPath =
+		domain.length <= 25 &&
+		pathnameLen > 3 &&
+		pathnameLen <= 15 &&
+		/^[^0-9][^.]+$/.test(pathname)
 			? '/' + pathname
-			: '';
-	domained = domain + firstPath;
-	domainsCache[url] = domained;
-	return domained;
-};
+			: ''
+	domained = domain + firstPath
+	domainsCache[url] = domained
+	return domained
+}
 
 // Search both news caches for a post by ID.
 // Returns { post, cacheKey } or null.
-var findCachedPost = function (id) {
-	var caches = ['hacker-news', 'hacker-news2'];
-	for (var c = 0; c < caches.length; c++) {
-		var news = store(caches[c]);
+const findCachedPost = function (id) {
+	const caches = ['hacker-news', 'hacker-news2']
+	for (const cacheKey of caches) {
+		const news = store(cacheKey)
 		if (news) {
-			for (var i = 0, l = news.length; i < l; i++) {
-				if (id == news[i].id) return { post: news[i], cacheKey: caches[c], news: news };
+			for (const post of news) {
+				if (id === post.id) return { post: post, cacheKey: cacheKey, news: news }
 			}
 		}
 	}
-	return null;
-};
+	return null
+}
 
-var $homeScroll = d.querySelector('#view-home .scroll'),
-	$homeScrollSection = $homeScroll.querySelector('section'),
-	loadingNews = false;
+const $homeScroll = d.querySelector('#view-home .scroll'),
+	$homeScrollSection = $homeScroll.querySelector('section')
+let loadingNews = false
 
 hw.news = {
 	options: {
@@ -106,461 +104,474 @@ hw.news = {
 	},
 	markupStory: function (item) {
 		if (/^item/i.test(item.url)) {
-			item.url = '#/item/' + item.id;
+			item.url = '#/item/' + item.id
 		} else {
-			item.external = true;
-			item.domain = domainify(item.url);
+			item.external = true
+			item.domain = domainify(item.url)
 		}
 		if (!hw.news.options.disclosure) {
-			if (item.id) item.url = '#/item/' + item.id;
+			if (item.id) item.url = '#/item/' + item.id
 		} else {
-			if (item.type == 'link') item.detail_disclosure = true;
+			if (item.type === 'link') item.detail_disclosure = true
 			if (/^#\//.test(item.url)) {
-				item.detail_disclosure = false;
-				item.disclosure = true;
-				item.domain = null;
+				item.detail_disclosure = false
+				item.disclosure = true
+				item.domain = null
 			}
 		}
-		item.i_point = item.points == 1 ? 'point' : 'points';
-		item.i_comment = item.comments_count == 1 ? 'comment' : 'comments';
-		return tmpl('post', item);
+		item.i_point = item.points === 1 ? 'point' : 'points'
+		item.i_comment = item.comments_count === 1 ? 'comment' : 'comments'
+		return tmpl('post', item)
 	},
 	markupStories: function (data, i) {
-		var html = '';
-		if (!i) i = 1;
-		var markupStory = hw.news.markupStory;
+		let html = ''
+		if (!i) i = 1
+		const markupStory = hw.news.markupStory
 		// Filter out stories with no comments unless the user opted out.
 		// Default is on; localStorage value 'off' disables the filter.
-		if (localStorage['hackerweb:options:hide-no-comments'] != 'off') {
+		if (localStorage['hackerweb:options:hide-no-comments'] !== 'off') {
 			data = data.filter(function (item) {
-				return item.comments_count > 0;
-			});
+				return item.comments_count > 0
+			})
 		}
-		data.forEach(function (item) {
-			item.i = i++;
-			html += markupStory(item);
-		});
-		return html;
+		for (const item of data) {
+			item.i = i++
+			html += markupStory(item)
+		}
+		return html
 	},
 	// Re-markup the story item in the News list when
 	// there's an update from specific API call of the item.
 	// Make sure the title, points, comments count, etc matches.
 	updateStory: function (story) {
-		if (!story || !story.id) return;
-		var id = story.id;
-		var data = story.data;
-		var cached = findCachedPost(id);
-		if (!cached) return;
-		var post = cached.post;
+		if (!story?.id) return
+		const id = story.id
+		const data = story.data
+		const cached = findCachedPost(id)
+		if (!cached) return
+		const post = cached.post
 		// Pass in the possibly changed values
-		var changed = false;
-		['title', 'url', 'time_ago', 'comments_count', 'points'].forEach(function (key) {
-			var val = data[key];
-			if (post[key] != val) {
-				post[key] = val;
-				changed = true;
+		let changed = false
+		for (const key of ['title', 'url', 'time_ago', 'comments_count', 'points']) {
+			const val = data[key]
+			if (post[key] !== val) {
+				post[key] = val
+				changed = true
 			}
-		});
-		if (!changed) return;
+		}
+		if (!changed) return
 		// Update the news cache (post was mutated in-place within cached.news)
-		store(cached.cacheKey, cached.news);
+		store(cached.cacheKey, cached.news)
 		// Update the story in the news list
-		var storyEl = $('story-' + id);
-		if (!storyEl) return;
-		post.selected = !!storyEl.querySelector('a[href].selected');
-		post.i = storyEl.dataset ? storyEl.dataset.index : storyEl.getAttribute('data-index');
-		storyEl.insertAdjacentHTML('afterend', hw.news.markupStory(post));
-		storyEl.parentNode.removeChild(storyEl);
+		const storyEl = $('story-' + id)
+		if (!storyEl) return
+		post.selected = !!storyEl.querySelector('a[href].selected')
+		post.i = storyEl.dataset
+			? storyEl.dataset.index
+			: storyEl.getAttribute('data-index')
+		storyEl.insertAdjacentHTML('afterend', hw.news.markupStory(post))
+		storyEl.parentNode.removeChild(storyEl)
 	},
 	render: function (opts) {
-		if (loadingNews) return;
-		if (!opts) opts = {};
-		var cached = store('hacker-news-cached');
-		var tmpl1 = tmpl('stories-load');
-		var loadNews = function (_data) {
-			var data = _data.slice();
-			var html =
+		if (loadingNews) return
+		if (!opts) opts = {}
+		const cached = store('hacker-news-cached')
+		const tmpl1 = tmpl('stories-load')
+		const loadNews = function (_data) {
+			const data = _data.slice()
+			const html =
 				'<ul class="tableview tableview-links" id="hwlist">' +
 				hw.news.markupStories(data) +
 				(store('hacker-news2')
 					? '<li><a class="more-link">More&hellip;<span class="loader"><i class="icon-loading"></i></span></a></li>'
 					: '') +
-				'</ul>';
-			$homeScrollSection.innerHTML = html;
-			hw.pub('onRenderNews');
-		};
+				'</ul>'
+			$homeScrollSection.innerHTML = html
+			hw.pub('onRenderNews')
+		}
 		if (cached) {
-			var news = store('hacker-news');
-			var delay = opts.delay;
+			const news = store('hacker-news')
+			const delay = opts.delay
 			if (delay) {
-				loadingNews = true;
-				$homeScrollSection.innerHTML = tmpl1({ loading: true });
+				loadingNews = true
+				$homeScrollSection.innerHTML = tmpl1({ loading: true })
 				setTimeout(function () {
-					loadingNews = false;
-					loadNews(news);
-				}, delay);
+					loadingNews = false
+					loadNews(news)
+				}, delay)
 			} else {
-				loadNews(news);
+				loadNews(news)
 			}
 		} else {
-			loadingNews = true;
-			$homeScrollSection.innerHTML = tmpl1({ loading: true });
-			var showError = function () {
-				$homeScrollSection.innerHTML = tmpl1({ load_error: true });
-			};
+			loadingNews = true
+			$homeScrollSection.innerHTML = tmpl1({ loading: true })
+			const showError = function () {
+				$homeScrollSection.innerHTML = tmpl1({ load_error: true })
+			}
 			hnapi.news(
 				function (data) {
-					loadingNews = false;
+					loadingNews = false
 					if (!data || data.error) {
-						showError();
-						return;
+						showError()
+						return
 					}
-					store('hacker-news', data);
+					store('hacker-news', data)
 					store('hacker-news-cached', true, {
 						expires: 1000 * 60 * 10, // 10 minutes
-					});
-					store('hacker-news2', null);
-					loadNews(data);
+					})
+					store('hacker-news2', null)
+					loadNews(data)
 					// Preload news2 to prevent discrepancies between /news and /news2 results
 					hnapi.news2(function (data) {
-						if (!data || data.error) return;
-						store('hacker-news2', data);
+						if (!data || data.error) return
+						store('hacker-news2', data)
 						$('hwlist').insertAdjacentHTML(
 							'beforeend',
 							'<li><a class="more-link">More&hellip;<span class="loader"></span></a></li>',
-						);
-					});
+						)
+					})
 				},
-				function (e) {
-					loadingNews = false;
-					showError();
+				function (_e) {
+					loadingNews = false
+					showError()
 				},
-			);
+			)
 		}
 	},
 	reload: function () {
 		hw.news.render({
 			delay: 300, // Cheat a little to make user think that it's doing something
-		});
+		})
 	},
 	more: function (target) {
-		if (target.classList.contains('loading')) return;
-		target.classList.add('loading');
-		var news2 = store('hacker-news2');
+		if (target.classList.contains('loading')) return
+		target.classList.add('loading')
+		const news2 = store('hacker-news2')
 		setTimeout(function () {
-			target.classList.remove('loading');
-			var targetParent = target.parentNode;
-			if (!targetParent) return;
-			if (targetParent.parentNode) targetParent.parentNode.removeChild(targetParent);
-			if (!news2) return;
+			target.classList.remove('loading')
+			const targetParent = target.parentNode
+			if (!targetParent) return
+			if (targetParent.parentNode) targetParent.parentNode.removeChild(targetParent)
+			if (!news2) return
 			// Dedupe against stories already shown from the first page.
-			var seen = {};
-			var news1 = store('hacker-news') || [];
-			for (var i = 0, l = news1.length; i < l; i++) seen[news1[i].id] = true;
-			var data = news2.slice().filter(function (item) {
-				return !seen[item.id];
-			});
-			var html = hw.news.markupStories(data, 31);
-			$('hwlist').insertAdjacentHTML('beforeend', html);
-		}, 400);
+			const seen = {}
+			const news1 = store('hacker-news') || []
+			for (const item of news1) seen[item.id] = true
+			const data = news2.slice().filter(function (item) {
+				return !seen[item.id]
+			})
+			const html = hw.news.markupStories(data, 31)
+			$('hwlist').insertAdjacentHTML('beforeend', html)
+		}, 400)
 	},
-};
+}
 
-var $commentsView = $('view-comments'),
+const $commentsView = $('view-comments'),
 	$commentsHeading = $commentsView.querySelector('header h1'),
-	$commentsSection = $commentsView.querySelector('section');
+	$commentsSection = $commentsView.querySelector('section')
 
 hw.comments = {
 	currentID: null,
 	render: function (id) {
-		if (!id) return;
-		var post = store.sessionStorage('hacker-item-' + id);
-		if (hw.comments.currentID == id && post) return;
-		hw.comments.currentID = id;
+		if (!id) return
+		let post = store.sessionStorage('hacker-item-' + id)
+		if (hw.comments.currentID === id && post) return
+		hw.comments.currentID = id
 
-		var loadPost = function (_data, id) {
-			var data = clone(_data),
-				tmpl1 = tmpl('post-comments');
+		const loadPost = function (_data, id) {
+			const data = clone(_data),
+				tmpl1 = tmpl('post-comments')
 
-			data.has_post = !!data.title;
+			data.has_post = !!data.title
 			if (!data.has_post) {
-				hw.setTitle();
-				$commentsHeading.innerText = '';
-				$commentsSection.innerHTML = tmpl1(data);
-				hw.pub('onRenderComments');
-				return;
+				hw.setTitle()
+				$commentsHeading.innerText = ''
+				$commentsSection.innerHTML = tmpl1(data)
+				hw.pub('onRenderComments')
+				return
 			}
 
 			// If "local" link, link to Hacker News web site
 			if (/^item/i.test(data.url)) {
-				data.url = '//news.ycombinator.com/' + data.url;
+				data.url = '//news.ycombinator.com/' + data.url
 			} else {
-				data.domain = domainify(data.url);
+				data.domain = domainify(data.url)
 			}
-			data.has_comments = data.comments && !!data.comments.length;
-			data.i_point = data.points == 1 ? 'point' : 'points';
-			data.i_comment = data.comments_count == 1 ? 'comment' : 'comments';
-			data.has_content = !!data.content;
+			data.has_comments = data.comments && !!data.comments.length
+			data.i_point = data.points === 1 ? 'point' : 'points'
+			data.i_comment = data.comments_count === 1 ? 'comment' : 'comments'
+			data.has_content = !!data.content
 			if (data.poll) {
-				var total = 0;
-				var max = 0;
-				data.poll.forEach(function (p) {
-					var points = p.points;
-					if (points > max) max = points;
-					total += points;
-					p.i_point = points == 1 ? 'point' : 'points';
-				});
-				data.poll.forEach(function (p) {
-					var points = p.points;
-					p.percentage = ((points / total) * 100).toFixed(1);
-					p.width = ((points / max) * 100).toFixed(1) + '%';
-				});
-				data.has_poll = data.has_content = true;
+				let total = 0
+				let max = 0
+				for (const p of data.poll) {
+					const points = p.points
+					if (points > max) max = points
+					total += points
+					p.i_point = points === 1 ? 'point' : 'points'
+				}
+				for (const p of data.poll) {
+					const points = p.points
+					p.percentage = ((points / total) * 100).toFixed(1)
+					p.width = ((points / max) * 100).toFixed(1) + '%'
+				}
+				data.has_poll = data.has_content = true
 			}
-			data.short_hn_url = 'news.ycombinator.com/item?id=' + id;
-			data.hn_url = '//' + data.short_hn_url;
-			hw.setTitle(data.title);
-			$commentsHeading.innerText = data.title;
+			data.short_hn_url = 'news.ycombinator.com/item?id=' + id
+			data.hn_url = '//' + data.short_hn_url
+			hw.setTitle(data.title)
+			$commentsHeading.innerText = data.title
 
-			var html = tmpl1(data);
-			var div = d.createElement('div');
-			div.innerHTML = html;
+			const html = tmpl1(data)
+			const div = d.createElement('div')
+			div.innerHTML = html
 
 			// Make all links open in new tab/window
 			// If it's a comment permalink, link to HN
-			var links = div.querySelectorAll('a');
-			for (var i = 0, l = links.length; i < l; i++) {
-				var link = links[i];
-				link.target = '_blank';
+			for (const link of div.querySelectorAll('a')) {
+				link.target = '_blank'
 			}
 
 			// Highlight the OP
-			var opUser = data.user;
+			const opUser = data.user
 			if (opUser) {
-				var users = div.querySelectorAll('.user');
-				for (var i = 0, l = users.length; i < l; i++) {
-					var user = users[i];
-					if (user.textContent.trim() == opUser) {
-						user.classList.add('op');
-						user.title = 'Original Poster';
+				for (const user of div.querySelectorAll('.user')) {
+					if (user.textContent.trim() === opUser) {
+						user.classList.add('op')
+						user.title = 'Original Poster'
 					}
 				}
 			}
 
 			// Add a collapse/expand toggle to every nested reply list.
-			var subUls = div.querySelectorAll('.comments li > ul');
-			for (var j = 0, l = subUls.length; j < l; j++) {
-				var subUl = subUls[j],
-					commentsCount = subUl.querySelectorAll('.metadata').length;
-				if (commentsCount < 3) continue;
-				subUl.style.display = 'none';
+			for (const subUl of div.querySelectorAll('.comments li > ul')) {
+				const commentsCount = subUl.querySelectorAll('.metadata').length
+				if (commentsCount < 3) continue
+				subUl.style.display = 'none'
 				subUl.insertAdjacentHTML(
 					'beforebegin',
-					'<button class="comments-toggle collapsed">' + commentsCount + ' replies</button>',
-				);
+					'<button class="comments-toggle collapsed">' +
+						commentsCount +
+						' replies</button>',
+				)
 			}
 
-			$commentsSection.replaceChildren(...div.childNodes);
+			$commentsSection.replaceChildren(...div.childNodes)
 
-			hw.pub('onRenderComments');
-		};
+			hw.pub('onRenderComments')
+		}
 
 		if (post) {
-			window.scrollTo(0, 0);
-			loadPost(post, id);
+			window.scrollTo(0, 0)
+			loadPost(post, id)
 		} else {
-			var cached = findCachedPost(id);
-			if (cached) post = cached.post;
+			const cached = findCachedPost(id)
+			if (cached) post = cached.post
 			if (post) {
-				post.loading = true;
-				loadPost(post, id);
+				post.loading = true
+				loadPost(post, id)
 			} else {
-				loadPost({ loading: true }, id);
+				loadPost({ loading: true }, id)
 			}
-			var showError = function () {
+			const showError = function () {
 				if (post) {
-					delete post.loading;
-					post.load_error = true;
-					loadPost(post, id);
+					delete post.loading
+					post.load_error = true
+					loadPost(post, id)
 				} else {
-					loadPost({ load_error: true }, id);
+					loadPost({ load_error: true }, id)
 				}
-			};
+			}
 			hnapi.item(
 				id,
 				function (data) {
-					if (hw.comments.currentID != id) return;
-					if (!data || (data.error && hw.currentView == 'comments')) {
-						showError();
-						return;
+					if (hw.comments.currentID !== id) return
+					if (!data || (data.error && hw.currentView === 'comments')) {
+						showError()
+						return
 					}
 					store.sessionStorage('hacker-item-' + id, data, {
 						expires: 1000 * 60 * 5, // 5 minutes
-					});
+					})
 					hw.news.updateStory({
 						id: id,
 						data: data,
-					});
-					loadPost(data, id);
+					})
+					loadPost(data, id)
 				},
-				function (e) {
-					if (hw.comments.currentID != id) return;
-					showError();
+				function (_e) {
+					if (hw.comments.currentID !== id) return
+					showError()
 				},
-			);
+			)
 		}
 	},
 	toggle: function (target) {
-		var ul = target.nextElementSibling;
+		const ul = target.nextElementSibling
 		if (ul) {
-			var ulStyle = ul.style;
-			var top = window.pageYOffset || document.documentElement.scrollTop || 0;
-			var collapsed = ulStyle.display != 'none';
-			ulStyle.display = collapsed ? 'none' : '';
+			const ulStyle = ul.style
+			const top = window.pageYOffset || document.documentElement.scrollTop || 0
+			const collapsed = ulStyle.display !== 'none'
+			ulStyle.display = collapsed ? 'none' : ''
 			if (collapsed) {
-				target.classList.add('collapsed');
+				target.classList.add('collapsed')
 			} else {
-				target.classList.remove('collapsed');
+				target.classList.remove('collapsed')
 			}
-			window.scrollTo(0, top);
+			window.scrollTo(0, top)
 		}
 	},
 	collapseParent: function (target) {
-		var li = target.closest('li');
-		if (!li) return;
-		var parentUl = li.parentNode;
-		if (!parentUl || parentUl.tagName != 'UL') return;
-		var grandparentLi = parentUl.parentNode;
-		if (!grandparentLi || grandparentLi.tagName != 'LI') return;
-		parentUl.style.display = 'none';
-		var toggleBtn = parentUl.previousElementSibling;
-		if (toggleBtn && toggleBtn.classList && toggleBtn.classList.contains('comments-toggle')) {
-			toggleBtn.classList.add('collapsed');
+		const li = target.closest('li')
+		if (!li) return
+		const parentUl = li.parentNode
+		if (!parentUl || parentUl.tagName !== 'UL') return
+		const grandparentLi = parentUl.parentNode
+		if (!grandparentLi || grandparentLi.tagName !== 'LI') return
+		parentUl.style.display = 'none'
+		const toggleBtn = parentUl.previousElementSibling
+		if (toggleBtn?.classList?.contains('comments-toggle')) {
+			toggleBtn.classList.add('collapsed')
 		} else {
-			var commentsCount = parentUl.querySelectorAll('.metadata').length;
-			var replyWord = commentsCount == 1 ? 'reply' : 'replies';
+			const commentsCount = parentUl.querySelectorAll('.metadata').length
+			const replyWord = commentsCount === 1 ? 'reply' : 'replies'
 			parentUl.insertAdjacentHTML(
 				'beforebegin',
-				'<button class="comments-toggle collapsed">' + commentsCount + ' ' + replyWord + '</button>',
-			);
+				'<button class="comments-toggle collapsed">' +
+					commentsCount +
+					' ' +
+					replyWord +
+					'</button>',
+			)
 		}
 		if (grandparentLi.scrollIntoView) {
-			grandparentLi.scrollIntoView({ block: 'start' });
+			grandparentLi.scrollIntoView({ block: 'start' })
 		}
 	},
 	reload: function () {
-		hw.comments.currentID = null;
-		router.reload();
+		hw.comments.currentID = null
+		router.reload()
 	},
-};
+}
 
 hw.init = function () {
-	hw.news.render();
-	router.init();
+	hw.news.render()
+	router.init()
 
-	var colorSchemeRetries = 0;
+	let colorSchemeRetries = 0
 	function renderColorScheme() {
-		var cssRule = null;
-		var sheets = document.styleSheets;
-		for (var i = 0; i < sheets.length && !cssRule; i++) {
+		let cssRule = null
+		for (const sheet of document.styleSheets) {
+			if (cssRule) break
 			try {
-				var rules = sheets[i].cssRules;
-				for (var j = 0; j < rules.length; j++) {
-					if (rules[j].media && /color-scheme:\s*dark/i.test(rules[j].media.mediaText)) {
-						cssRule = rules[j];
-						break;
+				for (const rule of sheet.cssRules) {
+					if (rule.media && /color-scheme:\s*dark/i.test(rule.media.mediaText)) {
+						cssRule = rule
+						break
 					}
 				}
-			} catch (e) {
+			} catch (_e) {
 				// Skip cross-origin stylesheets
 			}
 		}
 		if (!cssRule) {
-			if (++colorSchemeRetries < 10) setTimeout(renderColorScheme, 1000);
-			return;
+			if (++colorSchemeRetries < 10) setTimeout(renderColorScheme, 1000)
+			return
 		}
 		if (cssRule) {
-			$('hw-appearance-container').hidden = false;
-			var $hwAppearance = $('hw-appearance');
-			var $metaColorScheme = $('meta-color-scheme');
-			var prefersColorSchemeSupported =
-				window.matchMedia && window.matchMedia('(prefers-color-scheme)').media !== 'not all';
-			var appearanceStorageKey = 'hw-appearance';
-			var appearance = localStorage.getItem(appearanceStorageKey) || 'auto';
+			$('hw-appearance-container').hidden = false
+			const $hwAppearance = $('hw-appearance')
+			const $metaColorScheme = $('meta-color-scheme')
+			const prefersColorSchemeSupported =
+				window.matchMedia &&
+				window.matchMedia('(prefers-color-scheme)').media !== 'not all'
+			const appearanceStorageKey = 'hw-appearance'
+			let appearance = localStorage.getItem(appearanceStorageKey) || 'auto'
 
 			function setAppearance(appearance) {
 				if (appearance === 'dark') {
-					cssRule.media.mediaText = 'screen';
-					$metaColorScheme.content = 'dark';
+					cssRule.media.mediaText = 'screen'
+					$metaColorScheme.content = 'dark'
 				} else if (appearance === 'light') {
-					cssRule.media.mediaText = 'not all';
-					$metaColorScheme.content = 'light';
+					cssRule.media.mediaText = 'not all'
+					$metaColorScheme.content = 'light'
 				} else {
-					cssRule.media.mediaText = '(prefers-color-scheme: dark)';
-					$metaColorScheme.content = 'dark light';
+					cssRule.media.mediaText = '(prefers-color-scheme: dark)'
+					$metaColorScheme.content = 'dark light'
 				}
 			}
-			setAppearance(appearance);
+			setAppearance(appearance)
 
+			let input
 			if (prefersColorSchemeSupported) {
-				$hwAppearance.querySelector('[name=hw-appearance][value=auto]').parentNode.hidden = false;
-				var input = $hwAppearance.querySelector('[name=hw-appearance][value=' + appearance + ']');
-				input.checked = true;
+				$hwAppearance.querySelector(
+					'[name=hw-appearance][value=auto]',
+				).parentNode.hidden = false
+				input = $hwAppearance.querySelector(
+					'[name=hw-appearance][value=' + appearance + ']',
+				)
+				input.checked = true
 			} else {
 				if (!/(light|dark)/i.test(appearance)) {
-					appearance = 'light';
+					appearance = 'light'
 				}
-				var input = $hwAppearance.querySelector('[name=hw-appearance][value="' + appearance + '"]');
-				input.checked = true;
+				input = $hwAppearance.querySelector(
+					'[name=hw-appearance][value="' + appearance + '"]',
+				)
+				input.checked = true
 			}
 			$hwAppearance.onclick = function () {
-				var checkedInput = $hwAppearance.querySelector('[name=hw-appearance]:checked');
-				var appearance = checkedInput.value;
-				localStorage.setItem(appearanceStorageKey, appearance);
-				setAppearance(appearance);
-			};
+				const checkedInput = $hwAppearance.querySelector('[name=hw-appearance]:checked')
+				const appearance = checkedInput.value
+				localStorage.setItem(appearanceStorageKey, appearance)
+				setAppearance(appearance)
+			}
 		}
 	}
-	renderColorScheme();
+	renderColorScheme()
 
 	// "Hide stories with no comments" toggle on the About page.
-	var $hideNoComments = $('hw-hide-no-comments');
+	const $hideNoComments = $('hw-hide-no-comments')
 	if ($hideNoComments) {
-		var hideKey = 'hackerweb:options:hide-no-comments';
-		var current = localStorage[hideKey] == 'off' ? 'off' : 'on';
-		var input = $hideNoComments.querySelector(
+		const hideKey = 'hackerweb:options:hide-no-comments'
+		const current = localStorage[hideKey] === 'off' ? 'off' : 'on'
+		const input = $hideNoComments.querySelector(
 			'[name=hw-hide-no-comments][value="' + current + '"]',
-		);
-		if (input) input.checked = true;
+		)
+		if (input) input.checked = true
 		$hideNoComments.onclick = function () {
-			var checked = $hideNoComments.querySelector('[name=hw-hide-no-comments]:checked');
-			if (!checked) return;
-			if (checked.value == 'off') {
-				localStorage[hideKey] = 'off';
+			const checked = $hideNoComments.querySelector(
+				'[name=hw-hide-no-comments]:checked',
+			)
+			if (!checked) return
+			if (checked.value === 'off') {
+				localStorage[hideKey] = 'off'
 			} else {
-				delete localStorage[hideKey];
+				delete localStorage[hideKey]
 			}
-			var wasExpanded = !!(d.getElementById('hwlist') && !d.querySelector('#hwlist .more-link'));
-			hw.news.render();
+			const wasExpanded = !!(
+				d.getElementById('hwlist') && !d.querySelector('#hwlist .more-link')
+			)
+			hw.news.render()
 			if (wasExpanded) {
-				var list = d.getElementById('hwlist');
-				var moreLi = list && list.querySelector('.more-link');
-				if (moreLi && moreLi.parentNode) hw.news.more(moreLi);
+				const list = d.getElementById('hwlist')
+				const moreLi = list?.querySelector('.more-link')
+				if (moreLi?.parentNode) hw.news.more(moreLi)
 			}
-		};
+		}
 	}
-};
+}
 
 router
 	.config({
 		notfound: function () {
-			router.go('/');
+			router.go('/')
 		},
 	})
 	.add('/', 'home')
 	.add('/about', 'about')
-	.add(/^\/item\/(\d+)$/i, 'comments', function (path, id) {
-		hw.comments.render(id);
-	});
+	.add(/^\/item\/(\d+)$/i, 'comments', function (_path, id) {
+		hw.comments.render(id)
+	})
 
-export { hw, $, store, router };
+export { $, hw, router, store }
