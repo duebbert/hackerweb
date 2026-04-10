@@ -1,4 +1,3 @@
-import '../css/hw.css';
 import { hw, $, store, router } from './hw.js';
 
 (function (w) {

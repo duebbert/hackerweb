@@ -11,7 +11,6 @@
     "build": "vite build",
     "preview": "vite preview",
     "format": "prettier --write 'src/**/*.{js,css}' '*.html'",
-    "format:check": "prettier --check 'src/**/*.{js,css}' '*.html'",
-    "deploy": "git checkout gh-pages && git merge master && git push origin gh-pages && git checkout master"
+    "format:check": "prettier --check 'src/**/*.{js,css}' '*.html'"
   }
 }
