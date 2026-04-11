@@ -154,11 +154,7 @@ function renderPostComments(data) {
 }
 
 function renderPost(item) {
-	const classes = [
-		item.detail_disclosure && 'detail-disclosure',
-		item.disclosure && 'disclosure',
-		item.selected && 'selected',
-	]
+	const classes = ['detail-disclosure', item.selected && 'selected']
 		.filter(Boolean)
 		.join(' ')
 
@@ -181,12 +177,6 @@ function renderPost(item) {
 							</span>{' '}
 							<span class="inline-block">
 								{item.time_ago}
-								{!item.detail_disclosure && item.comments_count && (
-									<Fragment>
-										{' \u00b7 '}
-										{item.comments_count} {item.i_comment}
-									</Fragment>
-								)}
 								{item.cached && (
 									<span
 										class={
@@ -224,12 +214,10 @@ function renderPost(item) {
 					)}
 				</div>
 			</a>
-			{item.detail_disclosure && (
-				<a href={'#/item/' + item.id} class="detail-disclosure-button">
-					<span></span>
-					<b class="comments-count">{item.comments_count}</b>
-				</a>
-			)}
+			<a href={'#/item/' + item.id} class="detail-disclosure-button">
+				<span></span>
+				<b class="comments-count">{item.comments_count}</b>
+			</a>
 		</li>
 	)
 }

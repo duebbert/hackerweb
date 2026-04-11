@@ -102,14 +102,6 @@ on('#view-home-refresh', 'click', function (e) {
 	hw.news.reload()
 })
 
-// Story list clicks
-on('#view-home .tableview-links li>a:first-child', 'click', function (e, target) {
-	if (target.classList.contains('more-link')) {
-		e.preventDefault()
-		hw.news.more(target)
-	}
-})
-
 // Comment toggle
 on('button.comments-toggle', 'click', function (_e, target) {
 	hw.comments.toggle(target)
@@ -176,5 +168,4 @@ window.addEventListener('online', updateOnlineStatus)
 window.addEventListener('offline', updateOnlineStatus)
 updateOnlineStatus()
 
-hw.news.options.disclosure = true
 hw.init()

@@ -278,18 +278,6 @@ code {
 .tableview-links li > a.detail-disclosure-button:active span {
 	opacity: 0.5;
 }
-.tableview-links li > a.more-link {
-	color: #007aff;
-	cursor: pointer;
-	line-height: 3em;
-	padding: 10px;
-	display: block;
-	text-align: center;
-}
-.tableview-links li > a.more-link:active {
-	opacity: 0.5;
-}
-
 .grouped-tableview {
 	margin: 10px 9px 11px;
 	padding: 10px;
@@ -577,10 +565,6 @@ ol.grouped-tableview-links li > a:hover {
 .view section.comments button.comments-toggle:active {
 	background-color: #c8c8c8;
 }
-.view section.comments li.more-link-container {
-	padding: 0;
-}
-
 .link-text {
 	color: #003d80;
 	font-weight: normal;
@@ -768,7 +752,6 @@ body.offline .tableview-links li:not(:has(.cached-indicator)) {
 		background-color: #e84f66;
 	}
 	.link-text,
-	.tableview-links li > a.more-link,
 	.view .post-content header .metadata a.external-link:hover {
 		color: #2988cf;
 	}

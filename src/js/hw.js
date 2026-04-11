@@ -84,10 +84,8 @@ const domainify = function (url) {
 const cleanupStaleItems = function () {
 	if (!navigator.onLine) return
 	const news = store('hacker-news') || []
-	const news2 = store('hacker-news2') || []
 	const activeIds = {}
 	for (const item of news) activeIds[item.id] = true
-	for (const item of news2) activeIds[item.id] = true
 	const allStored = store() || {}
 	for (const key in allStored) {
 		if (/^hacker-item-\d+$/.test(key)) {
@@ -97,45 +95,37 @@ const cleanupStaleItems = function () {
 	}
 }
 
-// Search both news caches for a post by ID.
-// Returns { post, cacheKey } or null.
+// Search the news cache for a post by ID.
+// Returns { post, news } or null.
 const findCachedPost = function (id) {
-	const caches = ['hacker-news', 'hacker-news2']
-	for (const cacheKey of caches) {
-		const news = store(cacheKey)
-		if (news) {
-			for (const post of news) {
-				if (id === post.id) return { post: post, cacheKey: cacheKey, news: news }
-			}
+	const news = store('hacker-news')
+	if (news) {
+		for (const post of news) {
+			if (id === post.id) return { post: post, news: news }
 		}
 	}
 	return null
 }
 
+const filterNews = function (data) {
+	if (localStorage['hackerweb:options:hide-no-comments'] !== 'off') {
+		return data.filter(function (item) {
+			return item.comments_count > 0
+		})
+	}
+	return data
+}
 const $homeScroll = d.querySelector('#view-home .scroll'),
 	$homeScrollSection = $homeScroll.querySelector('section')
 let loadingNews = false
 
 hw.news = {
-	options: {
-		disclosure: true,
-	},
 	markupStory: function (item) {
 		if (/^item/i.test(item.url)) {
 			item.url = '#/item/' + item.id
 		} else {
 			item.external = true
 			item.domain = domainify(item.url)
-		}
-		if (!hw.news.options.disclosure) {
-			if (item.id) item.url = '#/item/' + item.id
-		} else {
-			if (item.type === 'link') item.detail_disclosure = true
-			if (/^#\//.test(item.url)) {
-				item.detail_disclosure = false
-				item.disclosure = true
-				item.domain = null
-			}
 		}
 		item.i_point = item.points === 1 ? 'point' : 'points'
 		item.i_comment = item.comments_count === 1 ? 'comment' : 'comments'
@@ -148,13 +138,6 @@ hw.news = {
 		let html = ''
 		if (!i) i = 1
 		const markupStory = hw.news.markupStory
-		// Filter out stories with no comments unless the user opted out.
-		// Default is on; localStorage value 'off' disables the filter.
-		if (localStorage['hackerweb:options:hide-no-comments'] !== 'off') {
-			data = data.filter(function (item) {
-				return item.comments_count > 0
-			})
-		}
 		for (const item of data) {
 			item.i = i++
 			html += markupStory(item)
@@ -182,7 +165,7 @@ hw.news = {
 		}
 		if (!changed) return
 		// Update the news cache (post was mutated in-place within cached.news)
-		store(cached.cacheKey, cached.news)
+		store('hacker-news', cached.news)
 		// Update the story in the news list
 		const storyEl = $('story-' + id)
 		if (!storyEl) return
@@ -198,14 +181,11 @@ hw.news = {
 		if (!opts) opts = {}
 		const cached = store('hacker-news-cached')
 		const tmpl1 = tmpl('stories-load')
-		const loadNews = function (_data) {
-			const data = _data.slice()
+		const loadNews = function (data) {
+			const filtered = filterNews(data)
 			const html =
 				'<ul class="tableview tableview-links" id="hwlist">' +
-				hw.news.markupStories(data) +
-				(store('hacker-news2')
-					? '<li><a class="more-link">More&hellip;<span class="loader"><i class="icon-loading"></i></span></a></li>'
-					: '') +
+				hw.news.markupStories(filtered) +
 				'</ul>'
 			$homeScrollSection.innerHTML = html
 			hw.pub('onRenderNews')
@@ -240,21 +220,8 @@ hw.news = {
 					store('hacker-news-cached', true, {
 						expires: 1000 * 60 * 10, // 10 minutes
 					})
-					store('hacker-news2', null)
 					loadNews(data)
-					// Preload news2 to prevent discrepancies between /news and /news2 results
-					hnapi.news2(function (data) {
-						if (!data || data.error) {
-							cleanupStaleItems()
-							return
-						}
-						store('hacker-news2', data)
-						$('hwlist').insertAdjacentHTML(
-							'beforeend',
-							'<li><a class="more-link">More&hellip;<span class="loader"></span></a></li>',
-						)
-						cleanupStaleItems()
-					})
+					cleanupStaleItems()
 				},
 				function (_e) {
 					loadingNews = false
@@ -270,37 +237,11 @@ hw.news = {
 	},
 	reload: function () {
 		store('hacker-news', null)
-		store('hacker-news2', null)
 		store('hacker-news-cached', null)
 		hw.preloader.stop()
 		hw.news.render({
 			delay: 300, // Cheat a little to make user think that it's doing something
 		})
-	},
-	more: function (target) {
-		if (target.classList.contains('loading')) return
-		target.classList.add('loading')
-		const news2 = store('hacker-news2')
-		setTimeout(function () {
-			target.classList.remove('loading')
-			const targetParent = target.parentNode
-			if (!targetParent) return
-			if (targetParent.parentNode) targetParent.parentNode.removeChild(targetParent)
-			if (!news2) return
-			// Dedupe against stories already shown from the first page.
-			const seen = {}
-			const news1 = store('hacker-news') || []
-			for (const item of news1) seen[item.id] = true
-			const data = news2.slice().filter(function (item) {
-				return !seen[item.id]
-			})
-			const html = hw.news.markupStories(data, 31)
-			$('hwlist').insertAdjacentHTML('beforeend', html)
-			// Preload comments for newly rendered stories
-			if (localStorage['hackerweb:options:offline-cache'] !== 'off') {
-				hw.preloader.start(data)
-			}
-		}, 400)
 	},
 }
 
@@ -399,11 +340,15 @@ hw.comments = {
 			hw.pub('onRenderComments')
 		}
 
-		if (post) {
+		// Re-fetch if the story list shows a different comment count than the cache
+		const newsEntry = post && findCachedPost(id)
+		const stale = newsEntry && newsEntry.post.comments_count !== post.comments_count
+
+		if (post && !stale) {
 			window.scrollTo(0, 0)
 			loadPost(post, id)
 		} else {
-			const cached = findCachedPost(id)
+			const cached = newsEntry || findCachedPost(id)
 			if (cached) post = cached.post
 			if (post) {
 				post.loading = true
@@ -686,15 +631,7 @@ hw.init = function () {
 			} else {
 				delete localStorage[hideKey]
 			}
-			const wasExpanded = !!(
-				d.getElementById('hwlist') && !d.querySelector('#hwlist .more-link')
-			)
 			hw.news.render()
-			if (wasExpanded) {
-				const list = d.getElementById('hwlist')
-				const moreLi = list?.querySelector('.more-link')
-				if (moreLi?.parentNode) hw.news.more(moreLi)
-			}
 		}
 	}
 

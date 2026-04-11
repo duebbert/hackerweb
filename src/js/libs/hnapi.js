@@ -1,4 +1,3 @@
-const FIREBASE_URL = 'https://hacker-news.firebaseio.com/v0/'
 const ALGOLIA_URL = 'https://hn.algolia.com/api/v1/'
 const timeout = 20000
 
@@ -43,28 +42,28 @@ function req(url, success, error) {
 		})
 }
 
-// --- Firebase → app format ---
+// --- Algolia search → app format ---
 
-function transformStory(item) {
-	if (!item || item.dead || item.deleted) return null
-	const hnType = item.type
+function transformSearchHit(hit) {
+	if (!hit) return null
+	const tags = hit._tags || []
 	let type = 'link'
-	if (hnType === 'job') type = 'job'
-	else if (hnType === 'poll') type = 'poll'
-	else if (hnType === 'ask' || (!item.url && hnType === 'story')) type = 'ask'
+	if (tags.includes('job')) type = 'job'
+	else if (tags.includes('poll')) type = 'poll'
+	else if (tags.includes('ask_hn') || !hit.url) type = 'ask'
 	return {
-		id: item.id,
-		title: item.title || '',
-		url: item.url || 'item?id=' + item.id,
-		points: item.score || 0,
-		comments_count: item.descendants || 0,
-		time_ago: timeAgo(item.time),
+		id: parseInt(hit.objectID, 10),
+		title: hit.title || '',
+		url: hit.url || 'item?id=' + hit.objectID,
+		points: hit.points || 0,
+		comments_count: hit.num_comments || 0,
+		time_ago: timeAgo(hit.created_at_i),
 		type: type,
-		user: item.by || '',
+		user: hit.author || '',
 	}
 }
 
-// --- Algolia → app format ---
+// --- Algolia item → app format ---
 
 function transformComment(child) {
 	if (!child) return null
@@ -103,94 +102,19 @@ function countComments(children) {
 	return count
 }
 
-// --- Batch fetch stories from Firebase ---
-
-function fetchStories(ids, success, error) {
-	const results = []
-	let totalPending = ids.length
-	if (totalPending === 0) {
-		success([])
-		return
-	}
-	const batchSize = 5
-	let i = 0
-
-	function finalize() {
-		// Sort by original ID order
-		const order = {}
-		for (let j = 0; j < ids.length; j++) order[ids[j]] = j
-		results.sort(function (a, b) {
-			return order[a.id] - order[b.id]
-		})
-		if (results.length > 0) success(results)
-		else error(new Error('Failed to fetch stories'))
-	}
-
-	function fetchBatch() {
-		const batch = ids.slice(i, i + batchSize)
-		if (batch.length === 0) return
-		i += batchSize
-		let batchDone = 0
-		for (const id of batch) {
-			req(
-				FIREBASE_URL + 'item/' + id + '.json',
-				function (item) {
-					const story = transformStory(item)
-					if (story) results.push(story)
-					if (--totalPending === 0) {
-						finalize()
-					} else if (++batchDone === batch.length) {
-						fetchBatch()
-					}
-				},
-				function () {
-					if (--totalPending === 0) {
-						finalize()
-					} else if (++batchDone === batch.length) {
-						fetchBatch()
-					}
-				},
-			)
-		}
-	}
-	fetchBatch()
-}
-
-// --- Module state ---
-
-let cachedTopStoryIds = null
-
 // --- Public API ---
 
 const hnapi = {
 	news: function (success, error) {
 		req(
-			FIREBASE_URL + 'topstories.json',
-			function (ids) {
-				cachedTopStoryIds = ids
-				fetchStories(ids.slice(0, 30), success, error)
+			ALGOLIA_URL + 'search?tags=front_page&hitsPerPage=100',
+			function (data) {
+				const stories = (data.hits || []).map(transformSearchHit).filter(Boolean)
+				if (stories.length > 0) success(stories)
+				else error(new Error('No stories returned'))
 			},
 			error,
 		)
-	},
-
-	news2: function (success, error) {
-		if (cachedTopStoryIds && cachedTopStoryIds.length > 30) {
-			fetchStories(cachedTopStoryIds.slice(30, 60), success, error)
-		} else {
-			req(
-				FIREBASE_URL + 'topstories.json',
-				function (ids) {
-					cachedTopStoryIds = ids
-					if (ids.length > 30) {
-						fetchStories(ids.slice(30, 60), success, error)
-					} else {
-						success([])
-					}
-				},
-				error,
-			)
-		}
 	},
 
 	item: function (id, success, error) {
@@ -201,10 +125,6 @@ const hnapi = {
 			},
 			error,
 		)
-	},
-
-	comments: function (id, success, error) {
-		hnapi.item(id, success, error)
 	},
 }
 

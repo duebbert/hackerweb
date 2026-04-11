@@ -10,7 +10,7 @@ Based on [HackerWeb](https://github.com/cheeaun/hackerweb) by [Lim Chee Aun](htt
 - Vanilla JavaScript (ES modules, no framework)
 - [Vite](https://vite.dev/) for builds
 - Single responsive theme with CSS animations and wide-screen dual-pane layout
-- Uses the [unofficial Hacker News API](https://github.com/cheeaun/node-hnapi/)
+- Uses the [Algolia HN Search API](https://hn.algolia.com/api) for stories and comments
 
 ## Development
 
@@ -26,8 +26,8 @@ npm run dev
 - `npm run dev` — Vite dev server with HMR
 - `npm run build` — production build → `dist/`
 - `npm run preview` — preview the production build locally
-- `npm run format` — format source files with Prettier
-- `npm run format:check` — check formatting without modifying files
+- `npm run format` — format source files with Biome
+- `npm run lint` — lint source files with Biome
 
 ## Deployment
 
@@ -41,7 +41,7 @@ Deployed via [Cloudflare Pages](https://pages.cloudflare.com/). Pushing to `mast
 
 ### Custom domain
 
-Custom domains are configured in the Cloudflare Pages dashboard under **Custom domains**, not via a CNAME file in the repo.
+Custom domains are configured in the Cloudflare Pages dashboard under **Custom domains**.
 
 ## License
 
