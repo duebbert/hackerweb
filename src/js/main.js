@@ -61,7 +61,11 @@ router.config({
 
 		if (currentView === 'comments') {
 			// nothing extra
-		} else if (currentView === 'about') {
+		} else {
+			// Reset so returning to the same story re-renders with fresh data
+			hw.comments.currentID = null
+		}
+		if (currentView === 'about') {
 			// Also show home behind about
 			$('view-home').classList.remove('hidden')
 		}

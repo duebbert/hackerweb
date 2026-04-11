@@ -252,6 +252,7 @@ const $commentsView = $('view-comments'),
 hw.comments = {
 	currentID: null,
 	render: function (id) {
+		id = parseInt(id, 10)
 		if (!id) return
 		let post = store('hacker-item-' + id)
 		if (hw.comments.currentID === id && post) return
