@@ -34,6 +34,13 @@ A simply readable Hacker News web app (https://hackerwebapp.com/). Static site, 
 - `npm run lint` / `npm run lint:fix` — lint with Biome.
 - `npm run check` / `npm run check:fix` — format + lint combined.
 
+## Versioning
+
+- Date-based version in `package.json` `"version"` field, format `YYYY.MM.DD` (e.g. `2026.04.11`).
+- If multiple commits happen on the same day, append a sub-counter: `2026.04.11.2`, `2026.04.11.3`, etc.
+- Bump the version in `package.json` on every commit.
+- Vite injects the version at build time via `__APP_VERSION__`; it's displayed on the About page.
+
 ## Conventions
 
 - Edit sources under `src/`, then `npm run build` to regenerate `dist/`.

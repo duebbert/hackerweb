@@ -1,5 +1,7 @@
 import { $, hw, router, store } from './hw.js'
 
+const VERSION = __APP_VERSION__
+
 const d = document
 
 // Adjust min-height on the views based on the viewport
@@ -167,5 +169,8 @@ function updateOnlineStatus() {
 window.addEventListener('online', updateOnlineStatus)
 window.addEventListener('offline', updateOnlineStatus)
 updateOnlineStatus()
+
+const versionEl = $('hw-version')
+if (versionEl) versionEl.textContent = 'v' + VERSION
 
 hw.init()

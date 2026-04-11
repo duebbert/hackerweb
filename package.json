@@ -1,6 +1,6 @@
 {
   "name": "hackerweb",
-  "version": "1.0.0",
+  "version": "2026.04.11",
   "type": "module",
   "devDependencies": {
     "@biomejs/biome": "^2.4.11",
